@@ -1,0 +1,464 @@
+<template>
+  <div class="active-situation l-mb-20 v-chart" style="height: 135px">
+    <v-chart ref="gauge" class="l-full" :option="option"></v-chart>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'active-gauge',
+  props: {
+  },
+  data() {
+    return {
+      option: {},
+      value: 85,
+    }
+  },
+  mounted() {
+    this.init()
+    // this.$refresh(this.$refs.gauge.chart, true)
+  },
+  beforeDestroy() {
+    clearInterval(this.timer)
+  },
+  methods: {
+    init() {
+      this.initOption()
+    },
+    initOption() {
+      // let bgColor = '#222939',
+      let bgColor = 'transparent',
+        lineColor = '#7F8C9A',
+        blue = '#09243F',
+        position = ['50%', '90%'],
+        value = this.value
+      this.option = {
+        backgroundColor: bgColor,
+        title: {
+          text: '{num|' + '活跃' + '}',
+          x: '50%',
+          y: '45%',
+          textAlign: 'center',
+          textStyle: {
+            rich: {
+              num: {
+                fontWeight: '700',
+                color: '#fff',
+                // fontFamily: 'digib',
+                fontSize: 22,
+                padding: [0, 10, -65, 0],
+              },
+              per: {
+                color: '#00FFAA',
+                fontSize: 20,
+                padding: [0, 0, -78, 0],
+              },
+              plan: {
+                color: '#fff',
+                fontSize: 14,
+                padding: [0, 0, -140, 0],
+                fontWeight: 700,
+              },
+            },
+          },
+        },
+        series: [
+          //最外圈,刻度,标签
+          {
+            name: '刻度',
+            type: 'gauge',
+            center: position, // 默认全局居中
+            splitNumber: 6, //刻度数量
+            min: 0,
+            max: 100,
+            startAngle: 180,
+            endAngle: 0,
+            clockwise: true,
+            z: 3,
+            axisLine: {
+              show: false,
+            },
+            //最外圈
+            axisTick: {
+              show: true,
+              distance: -64,
+              lineStyle: {
+                color: lineColor,
+                width: 4,
+              },
+              length: 1,
+              splitNumber: 6,
+            },
+            //刻度
+            splitLine: {
+              show: true,
+              length: 8,
+              distance: -57,
+              lineStyle: {
+                color: lineColor,
+              },
+            },
+            //标签
+            axisLabel: {
+              show: true,
+              color: lineColor,
+              fontSize: 10,
+              distance: 16,
+              formatter: function (params) {
+                var value = params.toFixed(2)
+                if (value == 0) {
+                  return '0%'
+                } else if (value == 50) {
+                  return '50%'
+                } else if (value == 100) {
+                  return '100%'
+                } else {
+                  return ''
+                }
+              },
+            },
+            pointer: {
+              //仪表盘指针
+              show: false,
+            },
+            detail: {
+              show: false,
+            },
+          },
+          //渐变标尺
+          {
+            type: 'gauge',
+            name: '渐变标尺',
+            center: position, // 默认全局居中
+            radius: '145%',
+            splitNumber: 0, //刻度数量
+            startAngle: 180,
+            endAngle: 0,
+            z: 2,
+            //渐变轴线
+            axisLine: {
+              lineStyle: {
+                width: 10,
+                shadowColor: 'rgba(0, 0, 0, 0.4)',
+                shadowBlur: 15,
+                //color: [[1, '#042046']],
+                color: [
+                  [
+                    0.25,
+                    new this.$echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                      {
+                        offset: 0,
+                        color: '#C52F50',
+                      },
+                      {
+                        offset: 1,
+                        color: '#3F1B3A',
+                      },
+                    ]),
+                  ],
+                  [
+                    0.5,
+                    new this.$echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                      {
+                        offset: 0,
+                        color: '#D28630',
+                      },
+                      {
+                        offset: 1,
+                        color: '#6D5946',
+                      },
+                    ]),
+                  ],
+                  [
+                    1,
+                    new this.$echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                      {
+                        offset: 0,
+                        color: '#20525B',
+                      },
+                      {
+                        offset: 1,
+                        color: '#2E9787',
+                      },
+                    ]),
+                  ],
+                ],
+              },
+            },
+            axisLabel: {
+              show: false,
+            },
+            axisTick: {
+              show: false,
+            },
+            splitLine: {
+              show: false,
+            },
+            detail: {
+              show: false,
+            },
+            pointer: {
+              show: false,
+            },
+          },
+          //标尺遮罩
+          {
+            type: 'gauge',
+            center: position, // 默认全局居中
+            radius: '145%',
+            clockwise: false,
+            splitNumber: 0,
+            startAngle: 0,
+            endAngle: (180 * (100 - value)) / 100,
+            z: 2,
+            axisLine: {
+              lineStyle: {
+                width: 25,
+                shadowColor: 'rgba(0, 0, 0, 0.4)',
+                shadowBlur: 15,
+                color: [[1, '#042046']],
+              },
+            },
+            axisLabel: {
+              show: false,
+            },
+            axisTick: {
+              show: false,
+            },
+            splitLine: {
+              show: false,
+            },
+            detail: {
+              show: false,
+            },
+            pointer: {
+              show: false,
+            },
+          },
+          //指针, 数值设置, 内圈线条样式
+          {
+            name: '数值',
+            type: 'gauge',
+            startAngle: 180,
+            endAngle: 0,
+            radius: '86%', //控制指针半径
+            center: position, // 默认全局居中
+            min: 0,
+            max: 100,
+            z: 2,
+            splitNumber: 0,
+            axisLine: {
+              lineStyle: {
+                color: [[1, lineColor]],
+                width: 1,
+              },
+            },
+            axisLabel: {
+              show: false,
+            },
+            splitLine: {
+              show: false,
+            },
+            pointer: {
+              itemStyle: {
+                color: '#fff',
+              },
+              width: '20%',
+              length: '140%',
+            },
+            detail: {
+              show: false,
+            },
+            data: [
+              {
+                name: '',
+                value: value,
+              },
+            ],
+          },
+          //光晕圆
+          {
+            type: 'pie',
+            radius: '140%',
+            center: position,
+            startAngle: 180,
+            z: 0,
+            hoverAnimation: false,
+            label: {
+              show: false,
+            },
+            tooltip: {
+              show: false,
+            },
+            data: [
+              {
+                value: 100,
+                name: '',
+                itemStyle: {
+                  normal: {
+                    //光晕在r和中间的offset之间调试
+                    color: new this.$echarts.graphic.RadialGradient(
+                      0.5,
+                      0.5,
+                      0.4,
+                      [
+                        {
+                          offset: 0,
+                          color: '#07615B',
+                        },
+                        {
+                          offset: 0.8,
+                          color: '#07615B',
+                        },
+                        {
+                          offset: 1,
+                          color: '#0B273F',
+                        },
+                      ],
+                      false
+                    ),
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+              {
+                value: 0,
+                name: '',
+                label: {
+                  normal: {
+                    show: false,
+                  },
+                },
+                itemStyle: {
+                  normal: {
+                    color: 'red',
+                  },
+                },
+              },
+            ],
+            animationType: 'scale',
+          },
+          //外遮罩圆
+          {
+            type: 'pie',
+            radius: '140%',
+            center: position, //位移偏上
+            startAngle: 180,
+            clockwise: false,
+            z: 1,
+            itemStyle: {
+              normal: {
+                color: bgColor,
+              },
+              emphasis: {
+                color: blue,
+              },
+            },
+            hoverAnimation: false,
+            label: {
+              show: false,
+            },
+            tooltip: {
+              show: false,
+            },
+            data: [
+              {
+                value: 100 - value / 2,
+                name: '',
+                itemStyle: {
+                  normal: {
+                    color: blue,
+                  },
+                },
+              },
+              {
+                value: value / 2,
+                name: '',
+                label: {
+                  normal: {
+                    show: false,
+                  },
+                },
+                itemStyle: {
+                  normal: {
+                    color: bgColor,
+                  },
+                },
+              },
+            ],
+            animationType: 'scale',
+          },
+          //内遮罩圆
+          {
+            name: '遮罩',
+            startAngle: 0,
+            tooltip: {
+              show: false,
+            },
+            type: 'pie',
+            radius: '85%',
+            center: position, // 默认全局居中
+            hoverAnimation: false,
+            z: 2,
+            /*itemStyle: {
+      normal: {
+      color: bgColor,
+        },
+        emphasis: {
+          color: bgColor,
+        },
+      },*/
+            labelLine: {
+              normal: {
+                show: false,
+              },
+            },
+            animation: false,
+            data: [
+              {
+                value: 50,
+                itemStyle: {
+                  normal: {
+                    color: blue,
+                  },
+                  emphasis: {
+                    color: blue,
+                  },
+                },
+              },
+              {
+                value: 50,
+                label: {
+                  normal: {
+                    show: false,
+                  },
+                },
+                itemStyle: {
+                  normal: {
+                    color: '#071C32',
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      }
+    },
+  },
+}
+</script>
+
+<style lang="less" scoped>
+@import '../../style/var.less';
+@compare-width: 58%;
+.active-situation {
+  position: relative;
+  font-size: 12px;
+}
+</style>

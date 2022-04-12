@@ -1,0 +1,325 @@
+<template>
+  <div class="report-echarts-map" style="height: 100%">
+    <v-chart ref="map" class="l-full" :option="option"></v-chart>
+  </div>
+</template>
+
+<script>
+import request from "@/request";
+import mapData from "./mapData";
+import areaData from "./areaData";
+export default {
+  name: "report-echarts-map",
+  data() {
+    return {
+      geoMap: {},
+      option: {},
+      backIMg:
+        "data:image/png;base64,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",
+      areaColor: {
+        type: "radial",
+        x: 0.5,
+        y: 0.5,
+        r: 0.8,
+        colorStops: [
+          {
+            offset: 0,
+            color: "rgba(0, 138, 189, 1)", // 0% 处的颜色
+          },
+
+          {
+            offset: 1,
+            color: "rgba(0, 78, 189, 1)", // 100% 处的颜色
+          },
+        ],
+        globalCoord: false, // 缺省为 false
+      },
+      borderColor22: {
+        type: "line",
+        x: 0,
+        x2: 0,
+        y: 0,
+        y2: 1,
+        colorStops: [
+          {
+            offset: 0,
+            // color: "#005bff", // 0% 处的颜色
+            color: "#008bff",
+          },
+          {
+            offset: 1,
+            color: "#00ebde", // 100% 处的颜色
+          },
+        ],
+        globalCoord: false, // 缺省为 false
+      },
+      borderColor: {
+        type: "radial",
+        x: 0,
+        x2: 1,
+        y: 1,
+        y2: 1,
+        colorStops: [
+          {
+            offset: 0,
+            // color: "#005bff", // 0% 处的颜色
+            color: "red",
+          },
+          {
+            offset: 1,
+            color: "#00ffa2", // 100% 处的颜色
+          },
+        ],
+        globalCoord: false, // 缺省为 false
+      },
+    };
+  },
+  mounted() {
+    this.init();
+  },
+  methods: {
+    async init() {
+      try {
+        let data = await this.fetchMapJson();
+        this.$echarts.registerMap("sz", data);
+        this.initGeoMap(data);
+        this.initOption();
+        this.initEvent();
+      } catch (error) {}
+    },
+    fetchMapJson() {
+      return request.get(`${CONFIG.geojsonUrl}/shenzhen.json`);
+    },
+    initEvent() {
+      this.$refs.map.chart.on("click", (e) => {
+        console.log(e);
+      });
+    },
+    initGeoMap(data) {
+      data.features.map((item) => {
+        let obj = {};
+        let { name, center } = item.properties;
+        this.geoMap[name] = center;
+        // let value = 50 + parseInt(Math.random() * 50)
+        obj = {
+          name,
+          center,
+          // value,
+          // itemStyle: {
+          //   areaColor: value > 80 ? this.areaColor : this.redAreaColor,
+          // },
+        };
+        return obj;
+      });
+    },
+    convertData(data, prop = "value") {
+      var res = [];
+      for (var i = 0; i < data.length; i++) {
+        var geoCoord = this.geoMap[data[i].name];
+        if (geoCoord) {
+          res.push({
+            name: data[i].name,
+            value: geoCoord.concat(data[i][prop]),
+            // tooltip: {
+            //   trigger: 'item',
+            //   formatter: '{a}{b}{c}',
+            //   backgroundColor: 'red',
+            // },
+          });
+        }
+      }
+      return res;
+    },
+    initOption() {
+      this.option = {
+        tooltip: {
+          trigger: "item",
+        },
+        width: "100%",
+        backgroundColor: "transparent",
+
+        visualMap: {
+          itemSymbol: "rect",
+          bottom: 20,
+          //   itemWidth: 500,
+          //   itemHeight: 500,
+          z: 5,
+          left: 10,
+          show: false,
+          color: ["#fefefe", "#09dbfb"],
+          min: 0,
+          max: 10000,
+          //   range: [0, 15000],
+          calculable: true,
+          textStyle: {
+            color: "#fff",
+            fontSize: 12,
+          },
+        },
+        grid: {
+          height: "100%",
+          width: "100%",
+        },
+        geo: [
+          {
+            map: "sz",
+            label: {
+              show: true,
+            },
+
+            tooltip: {
+              trigger: "item",
+              padding: [0, 0, 0, 0],
+              borderWidth: 0,
+              extraCssText: "background:transparent",
+              formatter: function (params) {
+                var name = params.name;
+                var html =
+                  "<div class='tootipBack' >" +
+                  "<div class='toolTop'>" +
+                  "<div class='tool-name l-mt-12 l-ml-20'>" +
+                  name +
+                  "</div>" +
+                  "<div class='tool-date l-mt-12 l-mr-20'>截止2022-03-16</div>" +
+                  "</div>" +
+                  "<div class='toolBottom'>" +
+                  //深圳市商圈数量
+                  "<div class='tool-content' style='width:25%'>" +
+                  "<div class='content-name' >深圳市商圈数量</div>" +
+                  "<div class='content-box'><p class='content-val'>47</p><p class='content-unit'>个</p></div>" +
+                  "</div>" +
+                  //大型商圈
+                  "<div class='tool-content' style='width:15%'>" +
+                  "<div class='content-name' >大型商圈</div>" +
+                  "<div class='content-box'><p class='content-val'>10</p><p class='content-unit'>个</p></div>" +
+                  "</div>" +
+                  //商圈经济活力指数
+                  "<div class='tool-content' style='width:30%'>" +
+                  "<div class='content-name' >商圈经济活力指数</div>" +
+                  "<div class='content-box'><p class='content-val'>87.32</p><p class='content-unit'></p></div>" +
+                  "</div>" +
+                  //商圈用电量同比增长情况
+                  "<div class='tool-content' style='width:30%'>" +
+                  "<div class='content-name' >商圈用电量同比增长情况</div>" +
+                  "<div class='content-box'><p class='content-val'>+3.84</p><p class='content-unit'>%</p></div>" +
+                  "</div>" +
+                  //
+                  "</div>" +
+                  "</div>";
+                return html;
+              },
+            },
+            top: "10%",
+            left: "100",
+            roam: true,
+            width: "90%",
+            height: "95%",
+            zoom: 0.9,
+            z: 1,
+            label: {
+              normal: {
+                show: false,
+                color: "#024b92",
+                fontSize: 16,
+              },
+              emphasis: {
+                color: "#fff",
+              },
+            },
+            itemStyle: {
+              normal: {
+                areaColor: "#194a81",
+                areaColor: {
+                  image: this.backIMg,
+                  repeat: "repeat",
+                },
+                borderColor: "#9fceff",
+                borderWidth: 2,
+                shadowColor: "#2a415e",
+                shadowBlur: 10,
+              },
+              emphasis: {
+                // 鼠标移入颜色
+                areaColor: "",
+              },
+            },
+          },
+        ],
+        series: [
+          {
+            mapType: "sz",
+            name: "AQI",
+            type: "heatmap",
+            coordinateSystem: "geo",
+            data: mapData,
+            itemSymbol: "rect",
+            roam: true,
+            itemStyle: {
+              borderColor: "#97c4f3",
+            },
+            itemStyle: {
+              normal: {
+                shadowColor: "#0051d2",
+                shadowBlur: 10,
+              },
+            },
+          },
+        ],
+      };
+    },
+  },
+};
+</script>
+
+<style lang="less">
+@import "../../style/var.less";
+.tootipBack {
+  background: url("@{imgUrl}/report/pageCenter/tooltipBG.png") no-repeat center
+    25%;
+  background-size: 115% 150%;
+  //   overflow: auto;
+  width: 600px;
+  height: 131px;
+  padding: 5px;
+  .toolTop {
+    width: 100%;
+    height: 40px;
+    .tool-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      float: left;
+    }
+    .tool-date {
+      float: right;
+      color: #c0d5fe;
+      font-size: 12px;
+    }
+  }
+  .toolBottom {
+    width: 100%;
+    height: 82px;
+    display: flex;
+    .tool-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      .content-name {
+        font-size: 12px;
+      }
+      .content-box {
+        display: flex;
+        align-items: baseline;
+        font-size: 14px;
+        .content-val {
+          font-size: 24px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+</style>

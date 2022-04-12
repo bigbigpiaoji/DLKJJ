@@ -1,0 +1,254 @@
+<template>
+  <div class="report-main">
+    <div class="main-top">
+      <subtitle :title="'宏观经济运行情况'" :more="'截至2022-03-16'"></subtitle>
+      <div class="estmate-bdp">预计本年已产生GDP</div>
+      <div class="number-count-box">
+        <number-count-to
+          :fontSize="60"
+          class="l-mt-16"
+          v-bind="countTo"
+        ></number-count-to>
+      </div>
+      <div class="list-box l-mt-42">
+        <div v-for="(item, index) in topList" :key="index">
+          <div class="list-name">{{ item.name }}</div>
+          <div class="list-content l-mt-14">
+            <div class="list-value">{{ item.value }}</div>
+            <div class="list-unit">{{ item.unit }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="main-bottom l-mt-28">
+      <subtitle :title="'区域用电发展情况'" :more="'截至2022-03-16'"></subtitle>
+      <div class="bt-list-box l-mt-30 l-pt-12">
+        <div class="name-list">
+          <div
+            class="name-list-val"
+            v-for="(item, index) in bottomList"
+            :key="index"
+          >
+            {{ item.name }}
+          </div>
+        </div>
+        <div class="content-list">
+          <div
+            class="content-val l-mt-14"
+            v-for="(item, index) in bottomList"
+            :key="index"
+          >
+            <div class="value">
+              {{ item.value }}
+            </div>
+            <div class="unit">
+              {{ item.unit ? item.unit : "" }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="report-map-box">
+        <report-map class="reportMap"></report-map>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+// import reportMap from "@/components/report-echarts-map";
+import reportMap from "@/components/report-scatter-map";
+export default {
+  name: "report-main",
+  components: {
+    reportMap,
+  },
+  data() {
+    return {
+      countTo: {
+        startVal: 0,
+        endVal: 60486063000,
+        decimals: 2,
+        duration: 1000,
+      },
+      topList: [
+        {
+          name: "已完成去年总GDP",
+          value: 28.75,
+          unit: "%",
+        },
+        {
+          name: "全社会用电量",
+          value: 64.86,
+          unit: "亿千瓦时",
+        },
+        {
+          name: "用电增速",
+          value: -9.4,
+          unit: "%",
+        },
+        {
+          name: "预计每度电支撑GDP",
+          value: 28.75,
+          unit: "元/度",
+        },
+      ],
+      bottomList: [
+        {
+          name: "深圳市商圈数量",
+          value: 47,
+          unit: "个",
+        },
+        {
+          name: "大型商圈",
+          value: 10,
+          unit: "个",
+        },
+        {
+          name: "商圈经济活力指数",
+          value: 87.32,
+          unit: "",
+        },
+        {
+          name: "商圈用电量同比增长情况",
+          value: "+3.84",
+          unit: "%",
+        },
+      ],
+    };
+  },
+};
+</script>
+
+<style lang="less">
+@import "../../style/var.less";
+.report-main {
+  height: 100%;
+  .subtitle {
+    background-size: 70% 100%;
+  }
+  .main-top {
+    height: 357px;
+    background: url("@{imgUrl}/report/pageCenter/centerBG.png") center center
+      no-repeat;
+    background-size: 100% 100%;
+    padding: 0 10px;
+    .estmate-bdp {
+      margin-top: 20px;
+      width: 72.3%;
+      height: 36px;
+      background: url("@{imgUrl}/report/pageCenter/gdpBG.png") center center;
+      background-size: 100% 100%;
+      margin-left: 13.85%;
+      font-size: 16px;
+      text-align: center;
+      font-weight: 600;
+      line-height: 32px;
+    }
+    .number-count-box {
+      display: flex;
+      justify-content: center;
+      .number-count-to span {
+        color: #fff;
+      }
+    }
+    .list-box {
+      display: flex;
+      justify-content: center;
+      & > div {
+        width: 15.7%;
+        height: 84px;
+        font-size: 14px;
+        background: red;
+        margin-left: 4.3%;
+        background: url("@{imgUrl}/report/pageCenter/topLBG.png") center bottom
+          no-repeat;
+        background-size: 100% 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .list-name {
+          color: #c0d5fe;
+        }
+        .list-content {
+          display: flex;
+          align-items: baseline;
+          .list-value {
+            font-size: 24px;
+          }
+        }
+      }
+      & > div:nth-child(1) {
+        margin-left: 0;
+      }
+    }
+  }
+  //
+  .main-bottom {
+    width: 100%;
+    height: 547px;
+    position: relative;
+    background: url("@{imgUrl}/report/pageCenter/centerBottomBG.png") center
+      center no-repeat;
+    background-size: 100% 100%;
+    padding: 0 10px;
+    .bt-list-box {
+      position: absolute;
+      width: 100%;
+      height: 90px;
+      z-index: 10;
+      background: url("@{imgUrl}/report/pageCenter/bottomLBG.png") center center
+        no-repeat;
+      background-size: 100% 100%;
+      .name-list {
+        display: flex;
+        height: 24px;
+        justify-content: center;
+        background-image: linear-gradient(
+          90deg,
+          transparent 0%,
+          #67b3ef0f,
+          #90addf1a 52%,
+          #91addf17 52%,
+          #67b3ef0d 76%,
+          transparent 100%
+        );
+        .name-list-val {
+          width: 15.7%;
+          margin-left: 4.3%;
+          text-align: center;
+          line-height: 24px;
+          color: #c0d5fe;
+        }
+        .name-list-val:nth-child(1) {
+          margin-left: 0;
+        }
+      }
+      .content-list {
+        display: flex;
+        font-size: 14px;
+        justify-content: center;
+        .content-val {
+          display: flex;
+          justify-content: center;
+          align-items: baseline;
+          width: 15.7%;
+          margin-left: 4.3%;
+          .value {
+            font-size: 24px;
+          }
+        }
+        .content-val:nth-child(1) {
+          margin-left: 0;
+        }
+      }
+    }
+    .report-map-box {
+      width: 100%;
+      height: 494px;
+      .reportMap {
+        height: 100%;
+      }
+    }
+  }
+}
+</style>

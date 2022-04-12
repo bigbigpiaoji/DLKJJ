@@ -1,0 +1,148 @@
+import baseLayout from './base-layout'
+import baseHeader from './base-header'
+import screenAdapter from './screen-adapter'
+import breadcrumb from './breadcrumb'
+import baseContainer from './base-container'
+import baseNav from './base-nav'
+import navTab from './nav-tab'
+import buttonTab from './button-tab'
+import countTo from './count-to'
+import numberCountTo from './number-count-to'
+import lHeader from './l-header'
+import subtitle from './subtitle'
+import tabMenu from './tab-menu'
+import panel from './panel'
+import baseList from './base-list'
+import navButton from './nav-button'
+import basePower from './base-power'
+import localDate from './local-date'
+import gdpPanel from './gdp-panel'
+import indicatorPanel from './indicator-panel'
+import areaLayout from './area-layout'
+// 联动4,7
+import indicatorPanelBalance from './indicator-panel/indicator-panel-balance.vue'
+// 联动5
+import indicatorPanelImportant from './indicator-panel/indicator-panel-important.vue'
+// 联动6
+import indicatorPanelCondition from './indicator-panel/indicator-panel-condition.vue'
+import trend from './trend'
+import electricCard from './electric-card'
+import whiteTitle from './white-title'
+import electricCardInnercard from './electric-card-innercard'
+import electricCardContrast from './electric-card-contrast'
+import electricCardMaxandmin from './electric-card-maxandmin'
+import electricCardBrand from './electric-card-brand'
+import situation from './situation'
+import maxsubtitle from './maxsubtitle'
+import electricPowerCard from './electric-powercard'
+import verticalLine from './vertical-line'
+import timegeneModel from './timegene-model'
+import timegeneLineChart from './timegene-line-chart'
+import timegeneContent from './timegene-content'
+import timegeneLinePowerChart from './timegene-line-powerchart'
+import timegeneList from './timegene-list'
+import timegeneOnuichartstitle from './timegene-onuichartstitle'
+import timegeneClearcharts from './timegene-clearcharts'
+import timegeneClearchartstwo from './timegene-clearchartstwo'
+import timegeneClearchartsthree from './timegene-clearchartsthree'
+import timegeneSprcharts from './timegene-sprcharts'
+import tradeEleccharts from './trade-eleccharts'
+import tradeCargocharts from './trade-cargocharts'
+import timegeneHolcharts from './timegene-holcharts'
+import tradeChartslist from './trade-chartslist'
+import tradeChartscontent from './trade-chartscontent'
+import tradeImportchartscontent from './trade-importchartscontent'
+import rankList from './rank-list'
+import rankHead from './rank-head'
+import cardWrap from './card-wrap'
+import tablePagination from './table-pagination'
+import darkButton from './dark-button'
+import lineImg from './line-img'
+import navMenu from './nav-menu'
+
+import bubble from './bubble';
+import subBubble from './sub-bubble';
+import lightNav from './light-nav'
+import mainHeader from './main-header'
+import countInfo from './count-info'
+import industryAnalysisNew from './industry-analysis-new'
+import innerAnalysis from  './inner-analysis'
+import animationFrames from './animation-frames'
+const components = [
+  baseLayout,
+  baseHeader,
+  baseContainer,
+  breadcrumb,
+  baseNav,
+  navTab,
+  lineImg,
+  areaLayout,
+  countTo,
+  numberCountTo,
+  buttonTab,
+  subtitle,
+  tabMenu,
+  panel,
+  darkButton,
+  baseList,
+  navButton,
+  basePower,
+  trend,
+  localDate,
+  gdpPanel,
+  indicatorPanel,
+  indicatorPanelBalance,
+  indicatorPanelImportant,
+  indicatorPanelCondition,
+  screenAdapter,
+  electricCard,
+  whiteTitle,
+  electricCardInnercard,
+  electricCardContrast,
+  electricCardMaxandmin,
+  electricCardBrand,
+  situation,
+  maxsubtitle,
+  electricPowerCard,
+  verticalLine,
+  timegeneModel,
+  timegeneLineChart,
+  timegeneContent,
+  timegeneLinePowerChart,
+  timegeneList,
+  timegeneOnuichartstitle,
+  timegeneClearcharts,
+  timegeneClearchartstwo,
+  timegeneClearchartsthree,
+  timegeneSprcharts,
+  timegeneHolcharts,
+  tradeChartscontent,
+  tradeChartslist,
+  tradeEleccharts,
+  tradeCargocharts,
+  tradeImportchartscontent,
+  rankList,
+  rankHead,
+  cardWrap,
+  tablePagination,
+  lHeader,
+  navMenu,
+  bubble,
+  subBubble,
+  lightNav,
+  mainHeader,
+  countInfo,
+  industryAnalysisNew,
+  innerAnalysis,
+  animationFrames
+]
+
+const install = function (Vue) {
+  components.forEach((component) => {
+    Vue.component(component.name, component)
+  })
+}
+
+export default {
+  install,
+}

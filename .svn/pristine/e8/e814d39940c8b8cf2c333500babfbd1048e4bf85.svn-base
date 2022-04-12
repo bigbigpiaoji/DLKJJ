@@ -1,0 +1,310 @@
+<template>
+  <div  class="v-chart">
+    <v-chart
+      ref="line"
+      class="l-full"
+      :autoresize="true"
+      :option="option"
+    ></v-chart>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "industryLineChart",
+  props: {
+    height: {
+      type: String,
+      default: "120px",
+    },
+  },
+  data() {
+    return {
+      option: {},
+      timer: null,
+    };
+  },
+  mounted() {
+    this.init();
+  },
+    computed: {
+    getStyle() {
+      return {
+      
+        height: this.$pxToRem(this.height) + "rem",
+     
+      };
+    },
+  },
+  methods: {
+    init() {
+      this.option = {
+        tooltip: {
+          axisPointer: {
+            lineStyle: {
+              opacity: 0,
+            },
+          },
+          trigger: "axis",
+          borderRadius: 0,
+          padding: 0,
+          borderColor: "#707070",
+          borderWidth: 1,
+          backgroundColor: "#000c28d9",
+          formatter: function (params) {
+            let legendColor1 = params[0].color;
+            let legendColor2 = params[1].color;
+            let legendColor3 = params[2].color;
+            let production1 = params[0].seriesName;
+            let production2 = params[1].seriesName;
+            let production3 = params[2].seriesName;
+            return [
+              "<div style='overflow:hidden;width:100%'>",
+              "<img style='position:absolute;top:0';left:0 src=" +
+                `${CONFIG.imgUrl}` +
+                "/list/zsjzs.png />",
+              "<div style='width:100%;height:100%;padding:10px'>",
+              "<div>",
+              "<div style='margin-left:0rem;color:#fff'>" + (params[0].dataIndex+1) + "月</div>",
+              "<div style='display:flex;align-items:center;color:#fff;justify-content: flex-end;'>",
+              "<div style='background-color:" +
+                legendColor1 +
+                ";width:5px;height:5px;color=#fff' class='l-mr-8'></div>",
+              "<div class='l-mr-8'> " + production1 + "</div>",
+              "<div style='width:30px' class='l-mr-8'>" + params[0].value + "</div>",
+              "<div class='l-ml-3'>亿千瓦时</div>",
+              "</div>",
+
+              "<div style='display:flex;align-items:center;color:#fff;justify-content: flex-end;'>",
+              "<div style='background-color:" +
+                legendColor2 +
+                ";width:5px;height:5px;color=#fff' class='l-mr-8'></div>",
+              "<div class='l-mr-8'> " + production2 + "</div>",
+              "<div style='width:30px'  class='l-mr-8'>" + params[1].value + "</div>",
+              "<div class='l-ml-3'>亿千瓦时</div>",
+              "</div>",
+
+              "<div style='display:flex;align-items:center;color:#fff;justify-content: flex-end;'>",
+              "<div style='background-color:" +
+                legendColor3 +
+                ";width:5px;height:5px;color=#fff' class='l-mr-8'></div>",
+              "<div class='l-mr-8'> " + production3 + "</div>",
+              "<div style='width:30px'  class='l-mr-8'>" + params[2].value + "</div>",
+              "<div class='l-ml-3'>亿千瓦时</div>",
+              "<div>",
+
+              "</div>",
+              "</div>",
+              "</div>",
+            ].join("\n");
+          },
+        },
+        title: [
+          {
+            text: "单位：亿千瓦时",
+            left: 275,
+            top: -10,
+            textStyle: {
+              width: 70,
+              height: 11,
+              fontSize: 10,
+              fontFamily: "Microsoft YaHei",
+              fontWeight: 400,
+              color: "#CFD4E8",
+              lineHeight: 20,
+            },
+          },
+        ],
+        legend: {
+          data: [
+            { name: "一产", icon: "rect" },
+            { name: "二产", icon: "rect" },
+            { name: "三产", icon: "rect" },
+          ],
+          lineStyle:{
+            color:"inherit"
+          },
+          itemWidth: 10,
+          itemHeight:2,
+          padding: [-20, -18, 0, 0],
+            formatter(params) {
+              return `{a| ${params} }`;
+            },
+            textStyle: {
+              fontSize: 11,
+              fontFamily: "Microsoft YaHei",
+              fontWeight: 400,
+              color: "#D3DAF2",
+              rich: {
+                a: {
+                  verticalAlign: "middle",
+                  padding: [2, 0, 0, 0],
+                },
+              },
+            },
+          right: 30,
+          itemGap: 22,
+          top: 35,
+        },
+        grid: {
+          left: "-5.5%",
+          right: "5%",
+          bottom: "0%",
+          top: "20%",
+          containLabel: true,
+        },
+        xAxis: {
+          boundaryGap: ["1%", "1%"],
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: "#CFD4E8",
+            },
+          },
+          axisTick: {
+            show: false,
+          },
+          name: "月",
+          nameTextStyle: {
+            verticalAlign: "bottom",
+            padding: [0, 0, -20, -15],
+          },
+          type: "category",
+          data: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+        },
+        yAxis: {
+          min: 0,
+          max: 100,
+          type: "value",
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: "#CFD4E8",
+              height: 85,
+            },
+          },
+          axisLabel: {
+            margin: 25, //y轴坐标轴数值与图表的间距
+            textStyle: {
+              align: "left", //y轴坐标轴数值左对齐
+            },
+          },
+          splitLine: {
+            show: true,
+            interval: 0,
+            lineStyle: {
+              color: "rgb(128 128 128 / 30%)",
+            },
+          },
+        },
+        series: [
+          {
+            color: "#69DAFF",
+            name: "一产",
+            type: "line",
+            symbol: "none",
+            areaStyle: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "rgb(79 176 208 / 40%)", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgb(79 176 208 / 0%)", // 100% 处的颜色
+                  },
+                ],
+                globalCoord: false, // 缺省为 false
+              },
+            },
+            data: [
+              0.05, 0.03, 0.05, 0.05, 0.05, 0.06, 0.07, 0.07, 0.07, 0.05, 0.05,
+              0.05,
+            ],
+          },
+          {
+            color: "#B6E888",
+            name: "二产",
+            type: "line",
+            symbol: "none",
+            areaStyle: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+
+                    color: "rgb(190 230 146 / 40%)", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgb(190 230 146 / 0%)", // 100% 处的颜色
+                  },
+                ],
+                globalCoord: false, // 缺省为 false
+              },
+            },
+            emphasis: {
+              focus: "series",
+            },
+            data: [
+              38.99, 23.36, 42.27, 39.04, 44.78, 45.09, 49.64, 48.95, 45.9,
+              40.72, 39.62, 39.41,
+            ],
+          },
+          {
+            color: "#D49304",
+            name: "三产",
+            type: "line",
+            symbol: "none",
+            areaStyle: {
+              // rgba(217, 157, 4, 1)
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+
+                    color: "rgb(217 157 4 / 40%)", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgb(217 157 4 / 0%)", // 100% 处的颜色
+                  },
+                ],
+                globalCoord: false, // 缺省为 false
+              },
+            },
+
+            data: [
+              22.45, 17.4, 24.75, 26.88, 35.54, 34.22, 37.23, 36.35, 37.26,
+              29.96, 25.92, 25.1,
+            ],
+          },
+        ],
+      };
+    },
+  },
+};
+</script>
+<style lang="less" scoped>
+@import "../../style/var.less";
+.v-chart{
+
+  height: 120px;
+}
+</style>

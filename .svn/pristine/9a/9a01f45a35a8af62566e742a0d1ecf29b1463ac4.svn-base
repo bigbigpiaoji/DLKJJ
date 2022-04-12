@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["macro-gdp"],{ddc0:function(e,t,n){"use strict";n.r(t);var r=function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("router-view")},a=[],c={props:{nav:{type:String,default:""}}},o=c,p=n("cba8"),u=Object(p["a"])(o,r,a,!1,null,"02a273b8",null);t["default"]=u.exports}}]);

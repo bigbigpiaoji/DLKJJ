@@ -1,0 +1,538 @@
+<template>
+  <div class="modeling-popup">
+    <el-dialog
+      :visible.sync="visible"
+      :before-close="dialogClose" 
+      append-to-body
+      center
+      top="20px"
+      custom-class="dark-dialog"
+    >
+      <div class="popup-title">
+        <div class="popup-name">每度电支撑GDP趋势预测</div>
+        <div class="back"></div>
+      </div>
+      <div class="card-back lineblock">
+        <div style="card-content">
+          <div class="lineblock">
+            <div class="card-title">本年累计全社会用电量</div>
+            <div class="card-time">截止2021-10-21</div>
+          </div>
+          <div class="lineblock">
+            <div class="card-value">2.487</div>
+            <div class="card-unit">万千瓦时</div>
+          </div>
+        </div>
+        <div class="card-line"><div class="card-line-content"></div></div>
+        <div style="card-content">
+          <div class="lineblock">
+            <div class="card-title">预测已产生GDP</div>
+            <div class="card-time"></div>
+          </div>
+          <div class="lineblock">
+            <div class="card-value">2.487</div>
+            <div class="card-unit">万亿元</div>
+          </div>
+        </div>
+        <div class="card-line"><div class="card-line-content"></div></div>
+        <div style="card-content">
+          <div class="lineblock">
+            <div class="card-title">预测本年每度电支撑GDP</div>
+            <!-- <div class="card-time"></div> -->
+          </div>
+          <div class="lineblock">
+            <div class="card-value-differ">2.487</div>
+            <div class="card-unit">元/度</div>
+          </div>
+        </div>
+      </div>
+      <div class="box-content">
+        <div class="popup-content">
+          <span class="popup-content-text"
+            >根据历年数据可知，GDP、全社会用电量与时间互相都具有相关性。
+            我们观察到，深圳GDP受用电量与时间共同影响，现构造当年用电总量，去年用电总量，去年GDP，前年GDP为特征，运用线性回归对当年GDP进行预测。得出多元线性回归方程来建立</span
+          >
+          <span class="popup-content-point">&nbsp;GDP预测模型</span
+          ><span class="popup-content-unit">&nbsp;。</span>
+        </div>
+        <div class="link-other">
+          <div @click="goToModeling">查看更多分析过程></div>
+        </div>
+        <div class="gdp-power-back lineblock">
+          <div class="gdp-power-time-chart">
+            <div class="gdp-power-time-chart-title">
+              <span>GDP、电耗与时间相关性</span>
+            </div>
+            <div
+              style="
+                width: 100%;
+                height: 80%;
+                margin-left: 20px;
+                margin-top: 20px;
+               
+                padding-right: 30px;
+              "
+            >
+              <modeling-gdp-time-chart
+                :gridWidth="400"
+                :gridLeft="22"
+                :gridHeight="195"
+                :legendPaddingRight="70"
+              ></modeling-gdp-time-chart>
+            </div>
+          </div>
+          <div class="gdp-power-chart">
+            <div class="gdp-power-chart-title">
+              <span>GDP与电耗相关性</span>
+            </div>
+            <div
+              style="
+                width: 100%;
+                height: 80%;
+                margin-left: 20px;
+                margin-top: 20px;
+                margin-bottom: 10px;
+              "
+            >
+              <modeling-gdp-power-chart
+                :gridWidth="455"
+                :gridTop="40"
+                :gridHeight="190"
+              ></modeling-gdp-power-chart>
+            </div>
+          </div>
+        </div>
+        <div class="popup-message">
+          <span class="popup-message-content">通过</span>
+          <span class="popup-message-point">&nbsp;GDP预测模型&nbsp;</span>
+          <span class="popup-message-content"
+            >我们可以根据本年全社会用电量预测出本年GDP，从而预测出本年单位GDP电耗。历年预测数据对比如下：</span
+          >
+        </div>
+        <div class="popup-bottum-title">每度电支撑GDP趋势</div>
+        <div class="lineblock">
+          <div class="forecast-line-chart">
+            <div
+              style="
+                width: 100%;
+                height: 78%;
+                margin-top: 20px;
+                margin-left: -20px;
+              "
+            >
+              <modeling-line-chart
+                :dataTrue="modelingSZ.dataTrue"
+                :dataForecast="modelingSZ.dataForecast"
+                :dataYear="modelingSZ.dataYear"
+                :interval="modelingSZ.interval"
+                :yAxisName="modelingSZ.yAxisName"
+                :yAxisNamePaddingLeft="modelingSZ.yAxisNamePaddingLeft"
+                :legendTrue="modelingSZ.legendTrue"
+                :legendForecast="modelingSZ.legendForecast"
+              ></modeling-line-chart>
+            </div>
+          </div>
+          <div class="forecast-card">
+            <div class="lineblock">
+              <div class="forecast-card-value">99.7</div>
+              <div class="forecast-card-unit">%</div>
+            </div>
+
+            <div class="forecast-card-message">预测精确度</div>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import modelingGdpPowerChart from "@/components/modeling-gdp-power-chart";
+import modelingGdpTimeChart from "@/components/modeling-gdp-time-chart";
+import modelingLineChart from "@/components/modeling-line-chart";
+export default {
+  name: "modeling-popup",
+  components: {
+    modelingGdpPowerChart,
+    modelingGdpTimeChart,
+    modelingLineChart,
+  },
+  data() {
+    return {
+      // visible: false,
+      modelingSZ: {
+        dataTrue: [
+          11.60834103, 11.25480011, 11.14573032, 11.43947207, 12.152422,
+          12.19617132, 13.6039297, 14.00307335, 15.17453093, 17.1299819,
+          18.69030605, 20.8753991, 21.2955191, 22.60691076, 24.3052827,
+          26.32055761, 27.54606805, 27.36520696, 28.13903635,
+        ],
+        dataForecast: [
+          10.69479432, 10.97069388, 11.24197656, 11.74699182, 12.2326781,
+          12.74325216, 13.73225611, 15.29944184, 14.48633368, 16.73827532,
+          18.71066062, 20.4767545, 21.6319071, 22.68198143, 23.80407644,
+          25.62407229, 27.6509334, 27.97280852, 28.42519302,
+        ],
+        rotate: 90,
+        yAxisName:"单位：元/度",
+        yAxisNamePaddingLeft:14,
+        legendTrue:"实际电耗",
+        legendForecast:"预测电耗",
+        interval: 1,
+        dataYear: [
+          "2002",
+          "2003",
+          "2004",
+          "2005",
+          "2006",
+          "2007",
+          "2008",
+          "2009",
+          "2010",
+          "2011",
+          "2012",
+          "2013",
+          "2014",
+          "2015",
+          "2016",
+          "2017",
+          "2018",
+          "2019",
+          "2020"
+        ],
+      },
+    };
+  },
+  props: {
+    visible: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    onClick() {
+      this.$emit("on-click");
+    },
+    dialogClose() {
+      this.$emit("update:visible", false);
+    },
+    goToModeling() {
+      this.$router.replace({
+        name: "macro-gdp-model",
+      });
+    },
+  },
+};
+</script>
+
+<style lang="less" scoped>
+@import "../../style/var.less";
+/deep/.dark-dialog {
+  min-height: 840px;
+  min-width: 1106px;
+  background: url("@{imgUrl}/model-img/popup-box.png") center center no-repeat;
+  background-size: 100% 100%;
+  display: flex;
+  flex-direction: column;
+  // align-items: center;
+  .popup-title {
+    display: flex;
+  }
+
+  .popup-name {
+    margin-top: 18px;
+    margin-left: 35px;
+    width: 254px;
+    height: 18px;
+    font-size: 24px;
+    font-family: ysbth;
+    // font-weight: bold;
+    color: #ffffff;
+    // font-style: oblique;
+    opacity: 0.8;
+  }
+  .el-dialog__headerbtn {
+    width: 29px;
+    height: 29px;
+    top: 40px;
+    right: 25px;
+    background: url("@{imgUrl}/model-img/close.png") center center no-repeat;
+    background-size: 100% 100%;
+  }
+  .el-dialog__:before {
+    content: "";
+  }
+  .el-dialog__body {
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    padding: 0;
+  }
+  .el-dialog__close {
+    display: none;
+  }
+
+  .card-back {
+    width: 1000px;
+    height: 87px;
+    margin-left: 48px;
+    margin-top: 24px;
+    background: url("@{imgUrl}/model-img/card-back.png") center center no-repeat;
+  }
+
+  .popup-content {
+    margin-top: 22px;
+    width: 960px;
+    height: 39px;
+
+    &-text {
+      font-size: 14px;
+      font-family: Microsoft YaHei;
+      font-weight: 400;
+      color: #ffffff;
+      line-height: 24px;
+      opacity: 0.8;
+    }
+
+    &-point {
+      font-size: 14px;
+      font-family: Microsoft YaHei;
+      font-weight: bold;
+      color: #c9e2ff;
+      line-height: 24px;
+      opacity: 0.9;
+    }
+
+    &-unit {
+      font-size: 14px;
+      font-family: Microsoft YaHei;
+      font-weight: 400;
+      color: #ffffff;
+      line-height: 24px;
+      font-weight: bold;
+      opacity: 0.8;
+    }
+  }
+
+  .lineblock {
+    display: flex;
+  }
+  .card-content {
+    width: 333px;
+  }
+  .card-title {
+    margin-left: 25px;
+    margin-top: 16px;
+    width: 160px;
+    height: 15px;
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #ffffff;
+    opacity: 0.8;
+  }
+  .card-time {
+    margin-left: 57px;
+    margin-top: 18px;
+    width: 91px;
+    height: 13px;
+    font-size: 12px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #d3daf2;
+    opacity: 0.8;
+  }
+  .card-value {
+    margin-left: 26px;
+    margin-top: 10px;
+    width: 69px;
+    height: 30px;
+    font-size: 30px;
+    font-family: Impact;
+    font-weight: 400;
+    // color: #cee9ff;
+    // opacity: 0.8;
+
+    background: linear-gradient(
+      0deg,
+      rgba(206, 233, 255, 0.45) 0%,
+      rgba(255, 255, 255, 1) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .card-value-differ {
+    margin-left: 26px;
+    margin-top: 10px;
+    width: 69px;
+    height: 30px;
+    font-size: 30px;
+    font-family: Impact;
+    font-weight: 400;
+    color: #01f1e0;
+    opacity: 0.9;
+  }
+  .card-unit {
+    margin-top: 26px;
+    margin-left: 8px;
+    width: 49px;
+    height: 13px;
+    font-size: 12px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #ffffff;
+    opacity: 0.8;
+  }
+  .card-line {
+    width: 1px;
+    margin-left: 22px;
+    margin-right: 3px;
+    &-content {
+      width: 1px;
+      height: 72px;
+      background: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+    }
+  }
+  .box-content {
+    margin-left: 57px;
+  }
+  .link-other {
+    margin-top: 2px;
+    cursor: pointer;
+    margin-left: 862px;
+    width: 124px;
+    height: 15px;
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #54c9ff;
+    line-height: 12px;
+    border-bottom: solid 1px #54c9ff;
+    opacity: 0.8;
+  }
+  .gdp-power-back {
+    margin-top: 20px;
+    width: 985px;
+    height: 283px;
+    // background: #4d5772;
+    border: 1px solid #4d5772;
+    // opacity: 0.16;
+    background: rgba(78, 87, 114, 0.16);
+    border-radius: 4px;
+  }
+  .popup-message {
+    margin-top: 20px;
+    width: 786px;
+    height: 15px;
+
+    &-content {
+      font-size: 14px;
+      font-family: Microsoft YaHei;
+      font-weight: 400;
+      color: #ffffff;
+      line-height: 24px;
+      opacity: 0.8;
+    }
+  }
+
+  .popup-message-point {
+    color: #c9e2ff;
+    font-weight: bold;
+    opacity: 0.9;
+  }
+  .forecast-line-chart {
+    // margin-left: 51px;
+    // margin-top: 29px;
+    width: 64%;
+    height: 269px;
+  }
+  .forecast-card {
+    margin-top: 56px;
+    margin-left: 45px;
+    width: 224px;
+    height: 167px;
+    background: url("@{imgUrl}/model-img/forecast-card.png") center center
+      no-repeat;
+  }
+  .forecast-card-value {
+    margin-left: 62px;
+    margin-top: -6px;
+    width: 89px;
+    height: 42px;
+    font-size: 50px;
+    font-family: Impact;
+    font-weight: 400;
+    color: #01f1e0;
+  }
+  .popup-bottum-title {
+    margin-top: 22px;
+    width: 130px;
+    height: 15px;
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    color: #ffffff;
+    line-height: 24px;
+    opacity: 0.9;
+  }
+  .forecast-card-unit {
+    margin-top: 20px;
+    width: 17px;
+    height: 16px;
+    font-size: 20px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: #ffffff;
+  }
+  .forecast-card-message {
+    margin-top: 15px;
+    margin-left: 77px;
+    width: 83px;
+    height: 16px;
+    font-size: 16px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    color: #ffffff;
+    font-weight: bold;
+    opacity: 0.9;
+  }
+  .gdp-power-time-chart {
+    width: 100%;
+    height: 100%;
+  }
+  .gdp-power-time-chart-title {
+    margin-top: 14px;
+    margin-left: 22px;
+    width: 157px;
+    height: 15px;
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    color: #ffffff;
+    line-height: 24px;
+    opacity: 0.8;
+  }
+  .gdp-power-chart {
+    width: 100%;
+    height: 100%;
+    margin-left: 30px;
+  }
+  .gdp-power-chart-title {
+    margin-top: 14px;
+    margin-left: 22px;
+    width: 157px;
+    height: 15px;
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    color: #ffffff;
+    line-height: 24px;
+    opacity: 0.9;
+  }
+}
+</style>

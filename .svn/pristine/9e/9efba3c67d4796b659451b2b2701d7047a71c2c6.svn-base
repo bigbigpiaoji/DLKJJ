@@ -1,0 +1,72 @@
+<template>
+  <div class="light-nav"
+       :style="getBg">
+    <div class="light-nav-icon"
+         :style="getIcon"></div>
+    <div class="light-nav-name">{{name}}</div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'light-nav',
+  props: {
+    name: {
+      type: String,
+      default: '',
+    },
+    type: {
+      type: String,
+      default: 'near',
+    },
+    icon: {
+      type: String,
+      default: `${CONFIG.imgUrl}/light-nav/icon.png`,
+    },
+  },
+  computed: {
+    getIcon() {
+      return {
+        backgroundImage: `url(${this.icon})`,
+      }
+    },
+    getBg() {
+      return {
+        backgroundImage: `url(${CONFIG.imgUrl}/light-nav/${this.type}.png)`,
+      }
+    },
+  },
+}
+</script>
+
+<style lang="less" scoped>
+@import '../../style/var.less';
+.light-nav{
+  display: flex;
+  align-items: center;
+  // justify-content: center;
+  flex-direction: column;
+  width: 130px;
+  height: 128px;
+  // background-image: url('@{imgUrl}/light-nav/near.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  &-icon{
+    margin-top: 10px;
+
+    width: 40px;
+    height: 40px;
+    // background: url('@{imgUrl}/light-nav/icon.png') center center no-repeat;
+    background-size: contain;
+  }
+
+  &-name{
+    font-size: 18px;
+    color: #fff;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+}
+</style>

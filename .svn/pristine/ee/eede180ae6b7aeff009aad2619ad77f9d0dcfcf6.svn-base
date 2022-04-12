@@ -1,0 +1,104 @@
+<template>
+  <div class="epidemic-impact-frame">
+    <div class="epidemic-impact-frame-frametitle">
+      <div class="epidemic-impact-frame-frametitle-frametitleleft">
+        {{ titleLeft }}
+      </div>
+      <div class="epidemic-impact-frame-frametitle-framedate">
+        {{ framedate }}
+        <div class="epidemic-impact-frame-frametitle-framedate-back" v-show="showback"  @click="backFirstItem">
+          <div
+            class="epidemic-impact-frame-frametitle-framedate-back-img"
+          ></div>
+          <div
+            class="epidemic-impact-frame-frametitle-framedate-back-fanhui"
+            
+         >返回</div>
+        </div>
+      </div>
+    </div>
+    <div class="epidemic-impact-frame-chart">
+      <slot></slot>
+    </div>
+
+    <epidemic-tb :sumData="epidemicTbData"></epidemic-tb>
+  </div>
+</template>
+<script>
+export default {
+  name: "epidemic-impact-frame",
+  
+  props: {
+    epidemicTbData: {
+      type: Object,
+      default: () => {},
+    },
+    showback:{
+        type:Boolean,
+        default:false
+    }
+  },
+  data() {
+    return {
+      titleLeft: "突发疫情行业影响",
+      framedate: "2022-03-14~2022-03-20",
+    };
+  },
+  methods:{
+      backFirstItem(){
+          this.$emit('backFirst','back')
+      }
+  }
+};
+</script>
+<style lang="less" scoped>
+@import "../../style/var.less";
+.epidemic-impact-frame {
+  padding: 10px 25px 10px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  &-chart {
+    padding: 10px 0 10px 0;
+  }
+  &-frametitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &-frametitleleft {
+      font-family: ysbth;
+      font-size: 16px;
+      color: #c7e5ff;
+    }
+    &-framedate {
+      font-size: 11px;
+      color: #c0d5fe;
+      font-family: MicrosoftYaHei;
+      display: flex;
+      align-items: center;
+      &-back {
+        width: 60px;
+        height: 20px;
+        background: rgb(18, 46, 78);
+        border: 1px solid rgba(47, 78, 113) ;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 8px;
+        cursor: pointer;
+        &-img {
+            width: 13px ;
+            height: 10px;
+            background: url("@{imgUrl}/report/back.png") center center no-repeat;
+            background-size: 100% 100%;
+            margin-right: 3px;
+        }
+        &-fanhui {
+            padding-top:3px ;
+        }
+      }
+    }
+  }
+}
+</style>

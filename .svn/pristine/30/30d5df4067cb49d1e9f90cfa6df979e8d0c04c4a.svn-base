@@ -1,0 +1,48 @@
+var elementResizeDetectorMaker = require("element-resize-detector");
+var chart = null;
+let handler = (element) => {
+  var width = element.offsetWidth;
+  var height = element.offsetHeight;
+  console.log("Size: " + width + "x" + height);
+  console.log('getChart', chart)
+  if (chart) {
+    // chart.setSize('width', width);
+    // chart.setSize('height', height);
+    // chart.reflow();
+    chart.setSize(width, height, false);
+    console.log('setchart')
+  }
+}
+let elementResize = (ele, vm, highchart) => {
+  var erd = elementResizeDetectorMaker();
+
+  console.log('element', ele)
+  console.log('vm', vm)
+  console.log('highchart', highchart)
+  vm.$on('hook:mounted', () => {
+    console.log('mounted')
+    vm.$nextTick(() => {
+      chart = highchart || {};
+      erd.listenTo(ele, handler);
+    })
+  })
+  vm.$on('hook:beforeDestroy', () => {
+    console.log('beforeDestroy')
+    erd.removeListener(ele, handler);
+  })
+  // return {
+  //   methods: {
+  //     $setChart(chart) {
+  //       chart = chart;
+  //       console.log('chart', chart)
+  //     }
+  //   },
+  //   mounted() {
+  //     erd.listenTo(ele, handler);
+  //   },
+  //   beforeDestroy() {
+  //     erd.removeListener(ele, handler);
+  //   }
+  // }
+}
+export default elementResize;

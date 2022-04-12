@@ -1,0 +1,21 @@
+<template>
+  <base-layout>
+    <l-header slot="header"
+              title="深圳电力经济基因图谱"
+              :left="20"
+              :right="20"></l-header>
+    <div slot="left">
+      <subtitle title="产业发展情况分析"></subtitle>
+    </div>
+    <div>main</div>
+    <div slot="right">right</div>
+  </base-layout>
+</template>
+
+<script>
+export default {}
+</script>
+
+<style lang="less" scoped>
+
+</style>

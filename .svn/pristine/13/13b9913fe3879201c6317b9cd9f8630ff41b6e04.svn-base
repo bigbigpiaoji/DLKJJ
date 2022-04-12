@@ -1,0 +1,30 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+
+import home from './modules/home';
+import macro from './modules/macro';
+import area from './modules/area';
+import industrial from './modules/industrial';
+import time from './modules/time';
+import micro from './modules/micro';
+import hot from './modules/hot';
+import report from './modules/report';
+
+Vue.use(VueRouter)
+
+const routes = [
+  ...home,
+  ...macro,
+  ...area,
+  ...industrial,
+  ...time,
+  ...micro,
+  ...hot,
+  ...report
+]
+
+const router = new VueRouter({
+  routes
+})
+
+export default router

@@ -1,0 +1,147 @@
+<template>
+  <div class="epidemic-impact">
+    <div class="epidemic-impact-chart">
+      <v-chart
+        ref="chart"
+        class=""
+        style=""
+        :autoresize="true"
+        :option="option"
+      >
+      </v-chart>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  name: "epidemic-impact",
+  props: {
+    data: {
+      type: Array,
+      default: () => [],
+    },
+    dataTwo: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  data() {
+    return {
+      option: {},
+      timer: null,
+    };
+  },
+  watch: {
+    dataTwo() {
+      this.option.series = [
+        {
+          data: this.dataTwo,
+        },
+      ];
+    },
+    data() {
+      this.option.xAxis.data = this.data;
+    },
+  },
+  mounted() {
+    this.init();
+    this.initEvent();
+  },
+  methods: {
+    init() {
+      this.initOption();
+    },
+    initEvent() {
+      this.$refs.chart.chart.on("click", (e) => {
+        this.$emit("chartDataChange", e);
+      });
+    },
+    initOption() {
+      this.option = {
+        grid: {
+          top: "13%",
+          left: "0%",
+          right: "0%",
+          bottom: "20%",
+        },
+        xAxis: {
+          type: "category",
+          data: this.data,
+
+          axisTick: {
+            show: false,
+          },
+          axisLine: {
+            show: false,
+          },
+          axisLabel: {
+            interval: 0,
+            padding: [3, 0, 0, 0],
+            fontSize: 12,
+            color: "#CFD4E8",
+          },
+        },
+        yAxis: {
+          show: false,
+          type: "value",
+          name: "单位：亿元",
+        },
+
+        series: [
+          {
+            data: this.dataTwo,
+            type: "bar",
+            barWidth: 50,
+            label: {
+              show: true,
+              position: "top",
+              valueAnimation: true,
+              formatter: "-" + "{c}" + "%",
+              textStyle: {
+                color: "#d3daf2",
+                fontSize: 12,
+                opacity: 0.06,
+                fontWeight: "bold",
+              },
+            },
+            itemStyle: {
+              normal: {
+                color: {
+                  type: "linear",
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: "#e52e4c", // 0% 处的颜色
+                    },
+                    {
+                      offset: 1,
+                      color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                    },
+                  ],
+                  global: false, // 缺省为 false
+                },
+              },
+            },
+          },
+        ],
+      };
+    },
+  },
+};
+</script>
+
+<style lang="less">
+@import "../../style/var.less";
+.epidemic-impact {
+  display: flex;
+  justify-content: center;
+  &-chart {
+    width: 400px;
+    height: 122px;
+  }
+}
+</style>

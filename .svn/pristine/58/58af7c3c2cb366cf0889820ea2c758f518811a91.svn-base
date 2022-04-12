@@ -1,0 +1,78 @@
+const  table=[
+    {
+       area: '工业',
+       areadegree: 608.23,
+       percentage:2.73,
+       lengths:160,
+       ishif:true,
+    },
+    {
+       area: '营利性服务业',
+       areadegree: 66.04,
+       percentage:8.69,
+       lengths:72,
+       ishif:true,
+    },
+    {
+       area: '金融业',
+       areadegree: 56.75,
+       percentage:5.73,
+       lengths:38,
+       ishif:true,
+    },
+    {
+       area: '批发和零售业',
+       areadegree: 39.21,
+       percentage:15.37,
+       lengths:12,
+       ishif:true,
+    },
+    {
+       area: '房地产业',
+       areadegree: 37.81,
+       percentage:19.03,
+       lengths:11,
+       ishif:true,
+    },
+    {
+       area: '非盈利性服...',
+       areadegree: 25.09,
+       percentage:7.76,
+       lengths:10,
+       ishif:true,
+    },
+    {
+       area: '建筑业',
+       areadegree: 23.30,
+       percentage:13.11,
+       lengths:10,
+       ishif:true,
+    },
+    {
+       area: '交通运输...',
+       areadegree: 22.46,
+       percentage:-0.75,
+       lengths:10,
+       ishif:false,
+       
+    },
+    {
+       area: '住宿和餐饮业',
+       areadegree: 20.28,
+       percentage:16.07,
+       lengths:9,
+       ishif:true,
+    },
+    {
+       area: '农林牧渔业',
+       areadegree: 17.22,
+       percentage:12.35,
+       lengths:8,
+       ishif:true,
+    },
+
+ ]
+
+ export {
+      table
+ }

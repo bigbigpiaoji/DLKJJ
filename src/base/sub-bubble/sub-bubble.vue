@@ -1,0 +1,55 @@
+<template>
+  <div class="sub-bubble"
+       v-html="name"
+       :style="getStyle">
+
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'sub-bubble',
+  props: {
+    name: {
+      type: String,
+      default: '百强企业<br/>碳排放',
+    },
+    delay: {
+      type: [String, Number],
+      default: 0,
+    },
+    duration: {
+      type: [String, Number],
+      default: 4,
+    },
+  },
+  computed: {
+    getStyle() {
+      const { duration, delay } = this
+      return {
+        animation: `bubble ${duration}s linear ${delay}s infinite`,
+      }
+    },
+  },
+}
+</script>
+
+<style lang="less" scoped>
+@import '../../style/var.less';
+
+.sub-bubble{
+  cursor: pointer;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0px 0px 21px 14px 
+		rgba(10, 14, 85, 0.46);
+  background: url('@{imgUrl}/bubble/sub-bubble.png');
+  background-size: contain;
+  text-align: center;
+  border-radius:50%;
+}
+</style>

@@ -1,0 +1,413 @@
+<template>
+  <base-layout :show-aside-left="false"
+               :show-aside-right="false"
+               :show-footer-background="false"
+               background-image="main-bg">
+    <main-header slot="header"
+                 title="能源双碳大数据中心"></main-header>
+
+    <div class="main-tree-wrap">
+
+      <div class="main-tree">
+        <!-- <lottie :options="lottieOption"
+                v-on:animCreated="handleAnimation"></lottie> -->
+      </div>
+      <div class="main-aside-left">
+        <count-info class="main-count-info"
+                    v-for="item in asideLeft"
+                    v-bind="item"
+                    :key="item.name">
+        </count-info>
+      </div>
+      <div class="main-aside-right">
+        <count-info class="main-count-info"
+                    v-for="item in asideRight"
+                    v-bind="item"
+                    :key="item.name">
+        </count-info>
+      </div>
+      <div class="main-tree-footer">
+        <light-nav v-for="item in nav"
+                   class="main-tree-footer-item"
+                   :key="item.name"
+                   v-bind="item">
+        </light-nav>
+      </div>
+      <div class="main-tree-branch-wrap">
+
+        <div class="main-tree-branch left">
+          <bubble v-bind="bubbleLeft"
+                  :style="setStyle(bubbleLeft)"></bubble>
+          <sub-bubble v-for="item in bubbleLeft.children"
+                      v-bind="item"
+                      :key="item.name"
+                      :style="setStyle(item)"></sub-bubble>
+        </div>
+        <div class="main-tree-branch left-top">
+          <bubble v-bind="bubbleLeftTop"
+                  :style="setStyle(bubbleLeftTop)"></bubble>
+          <sub-bubble v-for="item in bubbleLeftTop.children"
+                      v-bind="item"
+                      :key="item.name"
+                      :style="setStyle(item)"></sub-bubble>
+        </div>
+
+        <div class="main-tree-branch right-top">
+          <bubble v-bind="bubbleRightTop"
+                  :style="setStyle(bubbleRightTop)"></bubble>
+          <sub-bubble v-for="item in bubbleRightTop.children"
+                      v-bind="item"
+                      :key="item.name"
+                      :style="setStyle(item)"></sub-bubble>
+        </div>
+
+        <div class="main-tree-branch right-bottom">
+          <bubble v-bind="bubbleRightBottom"
+                  :style="setStyle(bubbleRightBottom)"></bubble>
+          <sub-bubble v-for="item in bubbleRightBottom.children"
+                      v-bind="item"
+                      :key="item.name"
+                      :style="setStyle(item)"></sub-bubble>
+        </div>
+      </div>
+    </div>
+  </base-layout>
+</template>
+
+<script>
+// import treeJson from '@/assets/lottie/data.json'
+
+export default {
+  data() {
+    return {
+      // lottieOption: {
+      //   animationData: treeJson,
+      // },
+      asideLeft: [
+        {
+          name: '总数据量',
+          value: '243',
+          unit: 'T',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+        },
+        {
+          name: '结构化数据',
+          value: '147',
+          unit: 'T',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+        },
+        {
+          name: '非结构化数据',
+          value: '89',
+          unit: 'T',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+        },
+      ],
+      asideRight: [
+        {
+          name: '数据条数',
+          value: '861',
+          unit: '亿',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+        },
+        {
+          name: '数据表',
+          value: '6091',
+          unit: '张',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+        },
+        {
+          name: '支撑应用',
+          value: '63',
+          unit: '个',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+        },
+      ],
+      nav: [
+        {
+          name: '客户服务',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+          type: 'near',
+        },
+        {
+          name: '生产业务',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+          type: 'far',
+        },
+        {
+          name: '电网基础',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+          type: 'near',
+        },
+        {
+          name: '电网运行',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+          type: 'near',
+        },
+        {
+          name: '客户档案',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+          type: 'far',
+        },
+        {
+          name: '营销业务',
+          icon: `${CONFIG.imgUrl}/count-info/icon.png`,
+          type: 'near',
+        },
+      ],
+      bubbleLeft: {
+        name: '电力看<br/>安全生产',
+        type: 'info',
+        delay: 0.3,
+        left: 100,
+        top: 80,
+        children: [
+          {
+            name: '企业用电<br/>安全监管',
+            delay: 0,
+            left: 60,
+            top: 0,
+          },
+          {
+            name: '停电事件<br/>影响分析',
+            delay: 0.1,
+            left: 0,
+            top: 100,
+          },
+          {
+            name: '施工开挖<br/>风险分析',
+            delay: 0.2,
+            left: 50,
+            top: 200,
+          },
+        ],
+      },
+      bubbleLeftTop: {
+        name: '双碳大脑',
+        type: 'success',
+        delay: 0,
+        left: 100,
+        top: 110,
+        children: [
+          {
+            name: '百强企业<br/>碳排放',
+            delay: 0.1,
+            left: 0,
+            top: 154,
+          },
+          {
+            name: '电能替代',
+            delay: 0.1,
+            left: 30,
+            top: 45,
+          },
+          {
+            name: '行业碳排放<br/>分析',
+            delay: 0.3,
+            left: 126,
+            top: 0,
+          },
+          {
+            name: '碳普惠',
+            delay: 0.1,
+            left: 216,
+            top: 55,
+          },
+        ],
+      },
+      bubbleRightTop: {
+        name: '电力看征信',
+        type: 'primary',
+        delay: 0,
+        left: 70,
+        top: 110,
+        children: [
+          {
+            name: '违约行为<br/>分析',
+            delay: 0.1,
+            left: 0,
+            top: 50,
+          },
+          {
+            name: '用电量波动',
+            delay: 0.1,
+            left: 95,
+            top: 10,
+          },
+          {
+            name: '电费缴纳<br/>判别',
+            delay: 0.3,
+            left: 200,
+            top: 66,
+          },
+          {
+            name: '开工连续性<br/>分析',
+            delay: 0.1,
+            left: 216,
+            top: 170,
+          },
+        ],
+      },
+      bubbleRightBottom: {
+        name: '电力看经济',
+        type: 'info',
+        delay: 0,
+        left: 100,
+        top: 110,
+        children: [
+          {
+            name: '区域基因',
+            delay: 0.4,
+            left: 0,
+            top: 154,
+          },
+          {
+            name: '宏观基因',
+            delay: 0.1,
+            left: 30,
+            top: 45,
+          },
+          {
+            name: '微观基因',
+            delay: 0.22,
+            left: 126,
+            top: 0,
+          },
+          {
+            name: '产业基因',
+            delay: 0.1,
+            left: 216,
+            top: 55,
+          },
+        ],
+      },
+    }
+  },
+  methods: {
+    setStyle(item) {
+      return {
+        left: `${item.left}px`,
+        top: `${item.top}px`,
+      }
+    },
+    handleAnimation(anim) {
+      anim.setSpeed(0.5)
+    },
+  },
+}
+</script>
+
+<style lang="less" scoped>
+@import '../../style/var.less';
+.main-tree{
+  width: 100%;
+  height: 100%;
+  background: url('@{imgUrl}/bg/main-tree.gif') center 0 no-repeat;
+  background-size: contain;
+  &-wrap{
+    position: relative;
+    width: 100%;
+    // width: 1920px;
+    // height: 937px;
+    height: 100%;
+   
+  }
+  &-branch{
+    &-wrap{
+      position: absolute;
+      left: 366px;
+      right: 366px;
+      // width: 1284PX;
+      top: 0;
+      bottom: 368px;
+    }
+    position: absolute;
+    // background-color: rgba(0,0,0,.5);
+    > div{
+        position: absolute;
+    }
+    &.left{
+      width: 300px;
+      height: 300px;
+      // left: 0px;
+      left : 6%;
+      top: 280px;
+      
+    }
+
+    &.left-top{
+      width: 300px;
+      height: 300px;
+      // left: 363px;
+      left:22%;
+      top: 70px;
+      
+    }
+    &.right-top{
+      width: 300px;
+      height: 300px;
+      // left: 766px;
+      left: 52%;
+      top: 20px;
+    }
+
+    &.right-bottom{
+      width: 300px;
+      height: 300px;
+      // left: 830px;
+      // left: 920px;
+      left:66%;
+      top: 360px;
+      
+    }
+  }
+  &-footer{
+    position: absolute;
+    bottom: 30px;
+    height: 250px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1004px;
+    &-item{
+      position: absolute;
+      &:nth-child(1){
+        left: 20px;
+        top: 68px;
+      }
+      &:nth-child(2){
+        left: 148px;
+        top: 0;
+      }
+      &:nth-child(3){
+        left: 266px;
+        top: 125px;
+      }
+      &:nth-child(4){
+        left: 600px;
+        top: 125px;
+      }
+      &:nth-child(5){
+        left: 710px;
+        top: 0;
+      }
+      &:nth-child(6){
+        left: 834px;
+        top: 68px;
+      }
+    }
+  }
+}
+.main-aside-left{
+  position: absolute;
+  left: 60px;
+  top: 200px;
+}
+.main-aside-right{
+  position: absolute;
+  right: 60px;
+  top: 200px;
+}
+.main-count-info{
+  margin-bottom: 25px;
+}
+</style>

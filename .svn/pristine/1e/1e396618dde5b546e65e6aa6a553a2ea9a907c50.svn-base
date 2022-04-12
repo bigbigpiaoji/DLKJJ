@@ -1,0 +1,39 @@
+{
+  "name": "power-economic",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "core-js": "^3.6.5",
+    "dayjs": "^1.10.7",
+    "echarts": "^5.2.2",
+    "echarts-stat": "^1.2.0",
+    "element-ui": "^2.15.6",
+    "highcharts": "^9.3.2",
+    "highcharts-vue": "^1.4.0",
+    "js-cookie": "^3.0.1",
+    "normalize.css": "^8.0.1",
+    "postcss-pxtorem": "^5.1.1",
+    "swiper": "^5.2.0",
+    "vue": "^2.6.11",
+    "vue-awesome-swiper": "^4.1.1",
+    "vue-cli": "^2.9.6",
+    "vue-echarts": "^6.0.0",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/composition-api": "^1.4.1",
+    "less": "^3.0.4",
+    "less-loader": "^5.0.0",
+    "vue-template-compiler": "^2.6.11"
+  }
+}

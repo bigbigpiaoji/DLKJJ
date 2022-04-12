@@ -1,0 +1,89 @@
+<template>
+  <div class="industry-analysis-new">
+    <!-- 标题 -->
+    <div class="industry-analysis-new-title">
+      <div class="industry-analysis-new-title-left">{{ headerData.titleLeft }}</div>
+      <div class="industry-analysis-new-title-right">{{ headerData.titleRight }}</div>
+    </div>
+
+    <!-- 分类 -->
+    <div class="industry-analysis-new-lablename">
+      <div class="industry-analysis-new-lablename-left">{{ headerData.industry }}</div>
+      <div class="industry-analysis-new-lablename-medd">
+        <div class="industry-analysis-new-lablename-medd-title">{{ headerData.gdp }}</div>
+        <div class="industry-analysis-new-lablename-medd-date">{{ headerData.unit }}</div>
+      </div>
+      <div class="industry-analysis-new-lablename-right">{{ headerData.tb }}</div>
+    </div>
+    <!-- 内容 -->
+    <div class="industry-analysis-new-content">
+      <inner-analysis :data="contentData" :lineColor="headerData.color"></inner-analysis>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  name: "industry-analysis-new",
+  props:{
+      headerData:{
+          type:Object,
+          default:()=>{}
+      },
+      contentData:{
+          type:Array,
+          default:()=>[]
+      }
+  },
+  data() {
+    return {
+
+    };
+  },
+
+};
+</script>
+<style lang="less" scoped>
+@import "../../style/var.less";
+.industry-analysis-new {
+  padding: 10px 20px 10px 20px;
+  &-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &-left {
+      font-family: ysbth;
+      font-size: 16px;
+      color: #c0d5fe;
+    }
+    &-right {
+      font-size: 11px;
+      color: #c0d5fe;
+    }
+  }
+  &-lablename {
+    display: flex;
+    margin: 20px 0 20px 0;
+    &-left {
+      font-weight: 600;
+      width: 84px;
+      font-size: 12px;
+    }
+    &-medd {
+      display: flex;
+      flex: 1;
+      &-title {
+        margin-left: 5px;
+        font-weight: 600;
+        font-size: 12px;
+      }
+      &-unit {
+      }
+    }
+    &-right {
+      text-align: end;
+      font-weight: 600;
+      font-size: 12px;
+    }
+  }
+}
+</style>

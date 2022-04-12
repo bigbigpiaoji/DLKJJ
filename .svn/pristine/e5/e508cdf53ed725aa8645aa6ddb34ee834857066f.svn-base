@@ -1,0 +1,1045 @@
+<template>
+  <base-layout background-image="bg-report">
+    <l-header
+      slot="header"
+      title="深圳经济电力基因图谱"
+      :left="20"
+      :right="20"
+    ></l-header>
+    <panel slot="left" class="l-mr-25">
+      <subtitle title="产业发展情况分析"> </subtitle>
+      <epidemic-impact-frame
+        :epidemicTbData="sumData"
+        @backFirst="onChangeEpidemic"
+        :showback="showback"
+      >
+        <epidemic-impact
+          :data="educationData"
+          :dataTwo="educationBarData"
+          :maxData="maxDataIndustry"
+          @chartDataChange="changeChartData"
+        ></epidemic-impact>
+      </epidemic-impact-frame>
+      <div class="split-line left-first"></div>
+      <div class="electricity-situation-title">
+        <div class="electricity-situation-title-left">
+          {{ electricitySituation.title }}
+        </div>
+        <div class="electricity-situation-title-right">
+          {{ electricitySituation.date }}
+        </div>
+      </div>
+      <div class="electricity-situation-container">
+        <threeD-pie
+          :charts="electricitySituation.pie"
+          class="electricity-pie"
+        ></threeD-pie>
+        <div class="electricity-situation-info">
+          <div
+            class="electricity-situation-info-item"
+            v-for="(item, index) in electricitySituation.data"
+            :key="item.type"
+          >
+            <div
+              class="electricity-situation-info-item-block"
+              :style="{
+                width: '3px',
+                background:
+                  index == 0 ? '#00ffaa' : index == 1 ? '#007eff' : '#ff9f00',
+              }"
+            ></div>
+            <div class="electricity-situation-info-item-type">
+              {{ item.type }}
+            </div>
+            <div class="electricity-situation-info-item-value">
+              {{ item.value }}{{ item.unit }}
+            </div>
+            <div class="electricity-situation-info-item-yoy">
+              同比
+              <div
+                :class="[
+                  item.yoy >= 0 ? 'content-uparrow' : 'content-downarrow',
+                ]"
+              ></div>
+              {{ item.yoy }}%
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="split-line left-second"></div>
+      <industry-analysis-new
+        :contentData="innerAnalysisData"
+        :headerData="innercontentData"
+        class="l-pt-7"
+      ></industry-analysis-new>
+    </panel>
+    <div>
+      <report-main />
+    </div>
+    <panel slot="right" class="l-ml-25 l-mr-15">
+      <subtitle :title="'企业发展情况分析'" :more="'截至2022-03-16'" />
+      <div class="sub-title l-mt-10">企业活跃情况</div>
+      <active-gauge :active-data="activeData" />
+      <div class="active-yoy">
+        <div
+          class="active-item"
+          v-for="(item, index) in activeData"
+          :key="index"
+        >
+          <span class="yoy-label">{{ item.label }}</span>
+          <span class="yoy-val">{{ item.value }}</span>
+          <span class="yoy-unit">{{ item.unit }}</span>
+        </div>
+      </div>
+      <div class="split-line"></div>
+      <div class="sub-title l-mt-10 l-mb-8">电耗前1000企业行业占比情况</div>
+      <threeD-pie
+        class="consumption-pie"
+        :charts="consumptionRatio"
+        bgLeft="52%"
+      ></threeD-pie>
+      <div class="split-line"></div>
+      <industry-analysis-new
+        :contentData="innerAnalysisDatatwo"
+        :headerData="innercontentDatatwo"
+        class="l-pl-10"
+      ></industry-analysis-new>
+    </panel>
+  </base-layout>
+</template>
+
+<script>
+import reportMain from "@/components/report-main";
+import activeGauge from "@/components/active-gauge";
+import threeDPie from "@/components/threed-pie";
+
+export default {
+  name: "report",
+  components: {
+    reportMain,
+    activeGauge,
+    threeDPie,
+  },
+  data() {
+    return {
+      //返回
+      showback: false,
+      backData: {
+        title: "同比2021年同期",
+        valData: [
+          {
+            val: -24.38,
+          },
+          {
+            val: -44.96,
+          },
+          {
+            val: -34.83,
+          },
+        ],
+      },
+      backeducationData: ["第一产业", "第二产业", "第三产业"],
+      backMaxDataIndustry: [50, 50, 50],
+      backeducationBarData: [
+        {
+          //  barGap: "-20%" /*多个并排柱子设置柱子之间的间距*/,
+
+          value: 27.38,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 43.96,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 34.83,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+      ],
+      //默认被改变
+      sumData: {
+        title: "同比2021年同期",
+        valData: [
+          {
+            val: -27.38,
+          },
+          {
+            val: -44.96,
+          },
+          {
+            val: -34.83,
+          },
+        ],
+      },
+      sumDataone: {
+        title: "同比2021年同期",
+        valData: [
+          {
+            val: -27.38,
+          },
+        ],
+      },
+      sumDatatwo: {
+        title: "同比2020疫情平均",
+        valData: [
+          {
+            val: -27.38,
+          },
+          {
+            val: -43.96,
+          },
+          {
+            val: -34.83,
+          },
+          {
+            val: -34.83,
+          },
+        ],
+      },
+      sumDatathree: {
+        title: "同比2020疫情平均",
+        valData: [
+          {
+            val: -27.38,
+          },
+          {
+            val: -27.38,
+          },
+          {
+            val: -27.38,
+          },
+          {
+            val: -43.96,
+          },
+          {
+            val: -34.83,
+          },
+        ],
+      },
+
+      activeData: [
+        {
+          label: "同比增长",
+          value: 768,
+          unit: "家",
+        },
+        {
+          label: "同比减少",
+          value: 232,
+          unit: "家",
+        },
+      ],
+      consumptionRatio: {
+        angle: 340,
+        width: 400,
+        height: 130,
+        size: 120,
+        innerSize: "60%",
+        labelName: "oneRow",
+        distance: 10,
+        colorName: "sevenColors",
+        enableLabels: true,
+        data: [
+          {
+            name: "工业",
+            y: 20,
+            h: 20,
+            // //opacity: 0.6,
+          },
+          {
+            name: "建筑业",
+            y: 6,
+            h: 6,
+            // //opacity: 0.6,
+          },
+          {
+            name: "房地产业",
+            y: 10,
+            h: 10,
+            // //opacity: 0.6,
+          },
+          {
+            name: "住宿和餐饮业",
+            y: 7,
+            h: 7,
+            // //opacity: 0.6,
+          },
+          {
+            name: "公共服务及...",
+            y: 20,
+            h: 20,
+            // //opacity: 0.6,
+          },
+          {
+            name: "批发和零售业",
+            y: 11,
+            h: 11,
+            // //opacity: 0.6,
+          },
+          {
+            name: "信息传输...",
+            y: 16,
+            h: 16,
+            // //opacity: 0.6,
+          },
+        ],
+      },
+      educationData: ["第一产业", "第二产业", "第三产业"],
+      maxDataIndustry: [50, 50, 50],
+      educationBarData: [
+        {
+          value: 27.38,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 43.96,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 34.83,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+      ],
+      educationDataone: ["农、林、牧、渔业"],
+      midDataIndustry: [50],
+      educationBarDataone: [
+        {
+          value: 27.38,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+      ],
+      educationDatatwo: ["制造业", "采矿业", "电力热力等", "建筑业"],
+      minDataIndustry: [50, 50, 50, 50],
+      educationBarDatatwo: [
+        {
+          value: 27.38,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 43.96,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 34.83,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 34.83,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+      ],
+      educationDatathree: [
+        "交通运输",
+        "批发零售",
+        "住宿餐饮",
+        "公共服务",
+        "其他",
+      ],
+      littleDataIndustry: [50, 50, 50, 50, 50],
+      educationBarDatathree: [
+        {
+          value: 27.38,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 43.96,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 34.83,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 34.83,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+        {
+          value: 34.83,
+          itemStyle: {
+            normal: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "#e52e4c", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(229,46,76,0.2)", // 100% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        },
+      ],
+
+      innercontentData: {
+        titleLeft: "各行业电耗价值分析",
+        titleRight: "2021年1-4季度",
+        industry: "行业分类",
+        gdp: "每度电支持GDP",
+        unit: "（单位：元/度）",
+        tb: "同比",
+        color: "yellow",
+      },
+      innercontentDatatwo: {
+        titleLeft: "深圳市电耗TOP10企业",
+        titleRight: "",
+        industry: "企业名称",
+        gdp: "用电量",
+        unit: "（单位：万千瓦时）",
+        tb: "同比",
+        color: "blue",
+      },
+      innerAnalysisData: [
+        {
+          area: "工业",
+          areadegree: 608.23,
+          percentage: 2.73,
+          lengths: 160,
+        },
+        {
+          area: "营利性服务业",
+          areadegree: 66.04,
+          percentage: 8.69,
+          lengths: 72,
+        },
+        {
+          area: "金融业",
+          areadegree: 56.75,
+          percentage: 5.73,
+          lengths: 38,
+        },
+        {
+          area: "批发和零售业",
+          areadegree: 39.21,
+          percentage: 15.37,
+          lengths: 12,
+        },
+        {
+          area: "房地产业",
+          areadegree: 37.81,
+          percentage: 19.03,
+          lengths: 11,
+        },
+        {
+          area: "非盈利性服...",
+          areadegree: 25.09,
+          percentage: 7.76,
+          lengths: 10,
+        },
+        {
+          area: "建筑业",
+          areadegree: 23.3,
+          percentage: 13.11,
+          lengths: 10,
+        },
+        {
+          area: "交通运输...",
+          areadegree: 22.46,
+          percentage: -0.75,
+          lengths: 10,
+        },
+        {
+          area: "住宿和餐饮业",
+          areadegree: 20.28,
+          percentage: 16.07,
+          lengths: 9,
+        },
+        {
+          area: "农林牧渔业",
+          areadegree: 17.22,
+          percentage: 12.35,
+          lengths: 8,
+        },
+      ],
+      innerAnalysisDatatwo: [
+        {
+          area: "华星光电",
+          areadegree: 129140,
+          percentage: 39.77,
+          lengths: 180,
+        },
+        {
+          area: "富士康",
+          areadegree: 48674,
+          percentage: 48.83,
+          lengths: 72,
+        },
+        {
+          area: "比亚迪",
+          areadegree: 26040,
+          percentage: 36.78,
+          lengths: 38,
+        },
+        {
+          area: "中兴",
+          areadegree: 7540,
+          percentage: 49.83,
+          lengths: 12,
+        },
+        {
+          area: "华为",
+          areadegree: 6370,
+          percentage: 26.31,
+          lengths: 11,
+        },
+        {
+          area: "水务(集团)",
+          areadegree: 5734,
+          percentage: 39.22,
+          lengths: 10,
+        },
+        {
+          area: "赛意法微",
+          areadegree: 5133,
+          percentage: 1.68,
+          lengths: 10,
+        },
+        {
+          area: "欣旺达电子",
+          areadegree: 4903,
+          percentage: 44.35,
+          lengths: 10,
+        },
+        {
+          area: "华生电机",
+          areadegree: 4546,
+          percentage: 50.78,
+          lengths: 9,
+        },
+        {
+          area: "深南电路",
+          areadegree: 3994,
+          percentage: 48.3,
+          lengths: 8,
+        },
+      ],
+      electricitySituation: {
+        title: "产业用电情况",
+        date: "截止2022-03-16",
+        data: [
+          { type: "一产", value: 0.03, unit: "亿千瓦时", yoy: 2.32 },
+          { type: "二产", value: 30.33, unit: "亿千瓦时", yoy: 2.32 },
+          { type: "三产", value: 24.5, unit: "亿千瓦时", yoy: 2.32 },
+        ],
+        pie: {
+          angle: 180,
+          width: 140,
+          height: 200,
+          size: 110,
+          innerSize: "55%",
+          labelName: "oneRow",
+          distance: 1,
+          colorName: "threeColors",
+          data: [
+            {
+              name: "一产",
+              y: 0.03,
+              h: 0.03,
+              // //opacity: 0.6,
+            },
+            {
+              name: "二产",
+              y: 30.33,
+              h: 15.33,
+              // //opacity: 0.6,
+            },
+            {
+              name: "三产",
+              y: 24.5,
+              h: 10.5,
+              // //opacity: 0.6,
+            },
+          ],
+        },
+      },
+    };
+  },
+  mounted() {},
+  methods: {
+    changeChartData(e) {
+      if (e.name === "第一产业") {
+        this.sumData = this.sumDataone;
+        this.educationData = this.educationDataone;
+        this.educationBarData = this.educationBarDataone;
+
+        this.showback = true;
+        this.maxDataIndustry = this.midDataIndustry;
+      } else if (e.name === "第二产业") {
+        this.sumData = this.sumDatatwo;
+        this.educationData = this.educationDatatwo;
+        this.educationBarData = this.educationBarDatatwo;
+
+        this.showback = true;
+        this.maxDataIndustry = this.minDataIndustry;
+      } else if (e.name === "第三产业") {
+        this.sumData = this.sumDatathree;
+        this.educationData = this.educationDatathree;
+        this.educationBarData = this.educationBarDatathree;
+
+        this.showback = true;
+        this.maxDataIndustry = this.littleDataIndustry;
+      }
+    },
+    onChangeEpidemic(val) {
+      if (val === "back") {
+        this.sumData = this.backData;
+        this.educationData = this.backeducationData;
+        this.educationBarData = this.backeducationBarData;
+        this.showback = false;
+        this.maxDataIndustry = this.backMaxDataIndustry;
+      }
+    },
+  },
+};
+</script>
+
+<style lang="less" scoped>
+@import "../../style/var.less";
+.sub-title {
+  font-size: 16px;
+  font-family: ysbth;
+  font-weight: 400;
+  color: #c7e5ff;
+  line-height: 20px;
+  padding-left: 10px;
+}
+.electricity-situation-title {
+  padding: 10px 10px 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  &-left {
+    font-family: ysbth;
+    font-size: 16px;
+    color: #c7e5ff;
+  }
+  &-right {
+    font-size: 11px;
+    color: #c0d5fe;
+  }
+}
+.active-yoy {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  margin: 0 20px;
+  bottom: 0;
+  width: calc(100% - 40px);
+  background: url("@{imgUrl}/report/yoy-bgm.png") no-repeat center center;
+  position: relative;
+  top: -30px;
+  background-size: contain;
+  .active-item {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+  }
+  .yoy-label {
+    color: #d3daf2;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  .yoy-val {
+    color: #fff;
+    font-weight: bold;
+    font-size: 24px;
+    margin: 0 10px;
+  }
+  .yoy-unit {
+    color: #d3daf2;
+    font-size: 12px;
+  }
+}
+.electricity-situation-container {
+  height: 125px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 10px 10px 20px;
+  margin-bottom: 20px;
+}
+.electricity-situation-info {
+  width: 56%;
+  margin-left: auto;
+  margin-top: 15px;
+  &-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    &-type {
+      color: #d3daf2;
+      font-size: 14px;
+    }
+    &-value {
+      font-weight: bold;
+    }
+    &-yoy {
+      display: flex;
+      align-items: center;
+    }
+  }
+  &-item + &-item {
+    margin-top: 20px;
+  }
+  .content-uparrow {
+    width: 10px;
+    height: 8px;
+    background-image: url("@{imgUrl}/list/uparrow.png");
+    background-size: 100% 100%;
+    margin: 0 3px;
+  }
+  .content-downarrow {
+    width: 9px;
+    height: 7px;
+    background-image: url("@{imgUrl}/list/downarrow.png");
+    background-size: 100% 100%;
+    margin: 0 3px;
+  }
+}
+.electricity-pie {
+  height: 230px;
+}
+.consumption-pie {
+  height: 160px;
+  margin-bottom: 5px;
+}
+.split-line {
+  background: url("@{imgUrl}/report/split.png") no-repeat center center;
+  background-size: contain;
+  height: 2px;
+  margin: 0 20px 10px 20px;
+  position: relative;
+  top: -8px;
+  &.left-first,
+  &.left-second {
+    top: 5px;
+    margin-right: 10px;
+  }
+}
+</style>

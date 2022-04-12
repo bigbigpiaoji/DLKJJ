@@ -1,0 +1,318 @@
+<template>
+  <div :style="{ height: height }" class="v-chart">
+    <v-chart
+      ref="line"
+      class="l-full"
+      :autoresize="true"
+      :option="option"
+    ></v-chart>
+  </div>
+</template>
+
+<script>
+import isEmpty from "@/utils/isEmpty";
+export default {
+  name: "timegene-line-chart",
+  props: {
+    height: {
+      type: String,
+      default: "120px",
+    },
+    data: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  data() {
+    return {
+      option: {},
+      timer: null,
+    };
+  },
+  mounted() {
+    this.init();
+  },
+  computed: {
+    getStyle() {
+      return {
+        height: this.$pxToRem(120) + "rem",
+      };
+    },
+  },
+  methods: {
+    init() {
+      this.option = {
+        tooltip: {
+          axisPointer: {
+            lineStyle: {
+              opacity: 0,
+            },
+          },
+          trigger: "axis",
+          borderRadius: 0,
+          padding: 0,
+          borderColor: "#707070",
+          borderWidth: 1,
+          backgroundColor: "#000c28d9",
+          formatter: function (params) {
+            let legendColor1 = params[0].color;
+            let legendColor2 = params[1].color;
+            let legendColor3 = params[2].color;
+            let production1 = params[0].seriesName;
+            let production2 = params[1].seriesName;
+            let production3 = params[2].seriesName;
+            let unit = "万千瓦时";
+
+            return `
+            <div class='charts-tooltip'>
+              <img class='charts-tooltip-img' src='${CONFIG.imgUrl}/list/zsjzs.png' />
+              <div class='charts-tooltip-inner'>
+              <div class='charts-tooltip-inner-heard'> ${params[0].name}</div>
+
+              <div class='charts-tooltip-inner-content'>
+                <div style='background-color:${legendColor1};' class='charts-tooltip-inner-content-lenged'></div>
+                <div class='charts-tooltip-inner-content-name'>  ${production1} </div>
+                <div class='charts-tooltip-inner-content-sum'> ${isEmpty(params[0].value)} </div>
+                <div class='charts-tooltip-inner-content-unit'>${unit}</div>
+              </div>
+
+              <div class='charts-tooltip-inner-content'>
+                <div style='background-color:${legendColor2};' class='charts-tooltip-inner-content-lenged'></div>
+                <div class='charts-tooltip-inner-content-name'>  ${production2} </div>
+                <div class='charts-tooltip-inner-content-sum'> ${isEmpty(params[1].value)} </div>
+                <div class='charts-tooltip-inner-content-unit'>${unit}</div>
+              </div>
+
+              <div class='charts-tooltip-inner-content'>
+                <div style='background-color:${legendColor3};' class='charts-tooltip-inner-content-lenged'></div>
+                <div class='charts-tooltip-inner-content-name'>  ${production3} </div>
+                <div class='charts-tooltip-inner-content-sum'> ${isEmpty(params[2].value)} </div>
+                <div class='charts-tooltip-inner-content-unit'>${unit}</div>
+              </div>
+
+            </div>
+
+            `;
+          },
+        },
+        title: [
+          {
+            text: "单位：" + this.data.unit,
+            left: 4,
+            top: -5,
+            textStyle: {
+              width: 70,
+              height: 11,
+              fontSize: 10,
+              fontFamily: "Microsoft YaHei",
+              fontWeight: 400,
+              color: "#CFD4E8",
+              lineHeight: 20,
+            },
+          },
+        ],
+        legend: {
+          data: [
+            { name: this.data.nameData1, icon: "rect" },
+            { name: this.data.nameData2, icon: "rect" },
+            { name: this.data.nameData3, icon: "rect" },
+          ],
+          lineStyle: {
+            color: "inherit",
+          },
+          itemWidth: 10,
+          itemHeight: 3,
+          padding: [-40, -25, 0, 0],
+          formatter(params) {
+            return `{a| ${params} }`;
+          },
+          textStyle: {
+            fontSize: 11,
+            fontFamily: "Microsoft YaHei",
+            fontWeight: 400,
+            color: "#D3DAF2",
+            lineHeight: 30,
+            rich: {
+              a: {
+                verticalAlign: "middle",
+                padding: [2, 0, 0, 0],
+              },
+            },
+          },
+          right: 30,
+          itemGap: 22,
+          top: 35,
+        },
+        grid: {
+          left: 9,
+          right: 10,
+          bottom: "0%",
+          top: "25%",
+          containLabel: true,
+        },
+        xAxis: {
+          boundaryGap: true,
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: "#CFD4E8",
+            },
+          },
+
+          axisTick: {
+            show: false,
+          },
+
+          type: "category",
+          data: this.data.Xdata,
+        },
+        yAxis: [
+          {
+            name: "a",
+            nameTextStyle: {
+              color: "rgba(0,0,0,0)",
+            },
+            type: "value",
+            axisLine: {
+              show: true,
+
+              lineStyle: {
+                color: "rgb(128 128 128 / 10%)",
+                height: 85,
+              },
+            },
+            axisLabel: {
+              margin: 5, //y轴坐标轴数值与图表的间距
+              textStyle: {
+                color: "#CFD4E8",
+                align: "right", //y轴坐标轴数值左对齐
+              },
+            },
+            splitLine: {
+              show: true,
+              interval: 0,
+              lineStyle: {
+                color: "rgb(128 128 128 / 10%)",
+              },
+            },
+          },
+          {
+            name: "b",
+            nameTextStyle: {
+              color: "rgba(0,0,0,0)",
+            },
+            type: "value",
+            axisLine: {
+              show: true,
+
+              lineStyle: {
+                color: "rgb(128 128 128 / 10%)",
+                height: 85,
+              },
+            },
+          },
+        ],
+        series: [
+          {
+            emphasis: {
+              focus: "series",
+            },
+            color: "#26BFB9",
+            name: this.data.nameData1,
+            type: "line",
+            symbol: "none",
+            areaStyle: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: "rgba(38, 191, 185, 0.4)", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(38, 191, 185, 0)", // 100% 处的颜色
+                  },
+                ],
+                globalCoord: false, // 缺省为 false
+              },
+            },
+            data: this.data.industryYearData,
+          },
+          {
+            color: "#9460FF",
+            name: this.data.nameData2,
+            type: "line",
+            symbol: "none",
+            areaStyle: {
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+
+                    color: "rgba(148, 96, 255, 0.4)", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(148, 96, 255, 0)", // 100% 处的颜色
+                  },
+                ],
+                globalCoord: false, // 缺省为 false
+              },
+            },
+            emphasis: {
+              focus: "series",
+            },
+            data: this.data.businessYearData,
+          },
+          {
+            emphasis: {
+              focus: "series",
+            },
+            color: "#2B94FF",
+            name: this.data.nameData3,
+            type: "line",
+            symbol: "none",
+            areaStyle: {
+              // rgba(217, 157, 4, 1)
+              color: {
+                type: "linear",
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+
+                    color: "rgba(43, 148, 255, 0.4)", // 0% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: "rgba(43, 148, 255, 0)", // 100% 处的颜色
+                  },
+                ],
+                globalCoord: false, // 缺省为 false
+              },
+            },
+
+            data: this.data.residentYearData,
+          },
+        ],
+      };
+    },
+  },
+};
+</script>
+<style lang="less" scoped>
+@import "../../style/var.less";
+</style>

@@ -1,0 +1,121 @@
+<template>
+  <header class="l-header">
+    <!-- <lottie class="l-header-lottie"
+            :options="lottieOption" /> -->
+    <slot name="header">
+      <div class="l-title"
+           @click="handleTitleClick">{{ title }}</div>
+
+    </slot>
+    <nav-menu class="l-nav"
+              :data="nav"
+              v-model="value"
+              @change="change"></nav-menu>
+    <local-date class="l-date"></local-date>
+  </header>
+</template>
+
+<script>
+// import headerJson from '@/assets/lottile/header.json'
+export default {
+  name: 'l-header',
+  props: {
+    title: {
+      type: String,
+      default: '',
+    },
+  },
+  data() {
+    return {
+      nav: [
+        {
+          name: '总览',
+          value: '/report',
+        },
+        {
+          name: '宏观基因',
+          value: '/macro/gdp/analysis',
+        },
+        {
+          name: '微观基因',
+          value: '/micro/rule-industry',
+        },
+        {
+          name: '区域基因',
+          value: '/area/electricity',
+        },
+        {
+          name: '产业基因',
+          value: '/industrial/secondary',
+        },
+        {
+          name: '疫情专题',
+          value: '/yiqing',
+        },
+      ],
+      value: '/report',
+      // lottieOption: {
+      //   animationData: headerJson,
+      // },
+    }
+  },
+  methods: {
+    handleTitleClick() {
+      // this.$router.replace({
+      //   path: '/',
+      // })
+    },
+    change(val) {},
+  },
+}
+</script>
+
+<style lang="less" scoped>
+@import "../../style/var.less";
+
+@l: l;
+.@{l} {
+  &-header {
+    width: 100%;
+    height: 110px;
+    background: url("@{imgUrl}/header/bg-report.png") center center no-repeat;
+    background-size: 100% 100%;
+
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &-title {
+    text-align: left;
+    cursor: pointer;
+    margin-top: 4px;
+    margin-left: 50PX;
+    align-self: flex-start;
+    white-space: nowrap;
+
+    font-size: 42px;
+    font-family: ysbth;
+    color: #eff8fc;
+    background: linear-gradient(
+      0deg,
+      rgba(119, 216, 255, 0.85) 0%,
+      rgba(233, 248, 255, 0.85) 73.3154296875%,
+      rgba(255, 255, 255, 0.85) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  &-nav{
+    margin-left: 260PX;
+    margin-top: -50px;
+  }
+  &-date {
+    max-width: 100px;
+    position: absolute;
+    right: 40px;
+    top: 10px;
+  }
+}
+</style>

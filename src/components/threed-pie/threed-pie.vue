@@ -1,0 +1,439 @@
+<template>
+  <!-- <div class="pie-container" :style="getStyle"> -->
+  <div class="pie-container" ref="chartsContainer">
+    <!-- <div class="bottom-img"></div> -->
+    <highcharts :options="option" ref="highcharts"></highcharts>
+    <animation-frames
+      class="pie-bg"
+      :width="bg.width"
+      :height="bg.height"
+      :allWidth="bg.allWidth"
+      :image="bg.image"
+      :style="{ left: bgLeft }"
+    ></animation-frames>
+  </div>
+</template>
+
+<script>
+import elementResize from '@/mixins/elementResize'
+export default {
+  name: 'threed-pie',
+  // mixins: [elementResize(document.getElementsByClassName('pie-container'))],
+  props: {
+    charts: {
+      type: Object,
+      default: () => {},
+    },
+    height: {
+      type: String,
+      default: '200px',
+    },
+    bgLeft: {
+      type: String,
+      default: '50%',
+    },
+  },
+  data() {
+    return {
+      color: [],
+      labelFormatter: '',
+      option: {},
+      bg: {
+        height: 71,
+        // width: 150,
+        // allWidth: 2400,
+        width: 130,
+        allWidth: 2080,
+        image: `${CONFIG.imgUrl}/pie/bottom.png`,
+      },
+    }
+  },
+  created() {},
+  mounted() {
+    this.initColor()
+    this.setOptionHeight()
+    this.initOption()
+    elementResize(
+      this.$refs.chartsContainer,
+      this,
+      this.$refs.highcharts.chart
+    )
+  },
+
+  methods: {
+    initColor() {
+      var that = this
+      this.color = (function () {
+        switch (that.charts.colorName) {
+          case 'twoColorsG':
+            return ['#3DFFC6', '#056ed9']
+          case 'twoColorsY':
+            return ['#fcc93a', '#056ed9']
+          case 'threeColors':
+            return ['#00ffaa', '#007eff', '#ff9f00']
+          case 'fourColors':
+            return ['#1f912f', '#fcc93a', '#ef7d33', '#056ed9']
+          case 'fiveColors':
+            return ['#45adcb', '#e29b64', '#f5bc51', '#97d3f3', '#1b55a6']
+          case 'sixColors':
+            return [
+              '#45adcb',
+              '#4990be',
+              '#e29b64',
+              '#f5bc51',
+              '#97d3f3',
+              '#1b55a6',
+            ]
+          case 'sevenColors':
+            return [
+              '#45adcb',
+              '#4990be',
+              '#e15430',
+              '#e29b64',
+              '#f5bc51',
+              '#97d3f3',
+              '#1b55a6',
+            ]
+          default:
+            return [
+              '#45adcb',
+              '#4990be',
+              '#e15430',
+              '#e29b64',
+              '#f5bc51',
+              '#97d3f3',
+              '#1b55a6',
+            ]
+        }
+      })()
+    },
+    //  initLabel() {
+    //   var that = this
+    //   this.labelFormatter = (function () {
+    //     switch (that.charts.colorName) {
+    //       case 'twoColorsG':
+    //         return ['#3DFFC6', '#056ed9']
+    //       default:
+    //         return [
+    //           '#45adcb',
+    //           '#4990be',
+    //           '#e15430',
+    //           '#e29b64',
+    //           '#f5bc51',
+    //           '#97d3f3',
+    //           '#1b55a6',
+    //         ]
+    //     }
+    //   })()
+    // },
+    setOptionHeight() {
+      var that = this
+      // 修改3d饼图绘制过程
+      var each = that.$highcharts.each,
+        round = Math.round,
+        cos = Math.cos,
+        sin = Math.sin,
+        deg2rad = Math.deg2rad
+      that.$highcharts.wrap(
+        that.$highcharts.seriesTypes.pie.prototype,
+        'translate',
+        function (proceed) {
+          proceed.apply(this, [].slice.call(arguments, 1))
+          // Do not do this if the chart is not 3D
+          if (!this.chart.is3d()) {
+            return
+          }
+          var series = this,
+            chart = series.chart,
+            options = chart.options,
+            seriesOptions = series.options,
+            depth = seriesOptions.depth || 0,
+            options3d = options.chart.options3d,
+            alpha = options3d.alpha,
+            beta = options3d.beta,
+            z = seriesOptions.stacking
+              ? (seriesOptions.stack || 0) * depth
+              : series._i * depth
+          z += depth / 2
+          if (seriesOptions.grouping !== false) {
+            z = 0
+          }
+          each(series.data, function (point) {
+            var shapeArgs = point.shapeArgs,
+              angle
+            point.shapeType = 'arc3d'
+            var ran = point.options.h
+            shapeArgs.z = z
+            shapeArgs.depth = depth * 0.75 + ran
+            shapeArgs.alpha = alpha
+            shapeArgs.beta = beta
+            shapeArgs.center = series.center
+            shapeArgs.ran = ran
+            angle = (shapeArgs.end + shapeArgs.start) / 2
+            point.slicedTranslation = {
+              translateX: round(
+                cos(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad)
+              ),
+              translateY: round(
+                sin(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad)
+              ),
+            }
+          })
+        }
+      )
+      ;(function (H) {
+        H.wrap(
+          that.$highcharts.SVGRenderer.prototype,
+          'arc3dPath',
+          function (proceed) {
+            // Run original proceed method
+            var ret = proceed.apply(this, [].slice.call(arguments, 1))
+            ret.zTop = (ret.zOut + 0.5) / 100
+            return ret
+          }
+        )
+      })(that.$highcharts)
+    },
+    initOption() {
+      var that = this
+      //颜色和数据赋值
+      var colors = this.color
+      var data = this.charts.data
+      var formatLabel = function () {
+        var color = this.color.stops[1][1]
+        switch (that.charts.labelName) {
+          case 'oneRow':
+            return (
+              '<p style="color:' +
+              color +
+              ';font-size:12px">' +
+              this.point.name +
+              '&nbsp' +
+              this.percentage.toFixed(0) +
+              '%</p>'
+            )
+          case 'twoRowSm':
+            return (
+              '<p style="color:' +
+              color +
+              '">' +
+              this.point.name +
+              '</p><br><p style="color:#fff"></br>' +
+              this.y +
+              '</p><p style="color:#fff"> 个(' +
+              this.percentage.toFixed(0) +
+              '%)</p>'
+            )
+          case 'twoRowLg':
+            return (
+              '<p style="color:#BAC9DD;font-size:14px">' +
+              this.point.name +
+              '</p><br><p style="color:' +
+              color +
+              ';padding:10px;font-size:24px">' +
+              this.y +
+              '</br></p>' +
+              '<span style="color:#BAC9DD;font-size:14px">个 </span>' +
+              '<p style="color:#BAC9DD;font-size:14px">' +
+              this.percentage.toFixed(0) +
+              '%</p>'
+            )
+          case 'threeRow':
+            return (
+              '<p style="color:#BAC9DD">' +
+              this.point.name +
+              '</p><br><p style="color:' +
+              color +
+              ';font-size:24px;font-family:digib">' +
+              this.y +
+              '<span style="color:#fff;font-size:14px;font-weight:bold">项 ' +
+              this.percentage.toFixed(0) +
+              '%</span></p>'
+            )
+          default:
+            return (
+              '<p style="color:#BAC9DD;font-size:16px">' +
+              this.point.name +
+              '</p><br><p style="color:' +
+              color +
+              ';font-size:34px;font-family:digib">' +
+              this.y +
+              '</br></p>' +
+              '<span style="color:#BAC9DD;font-size:14px">  项</span>' +
+              '<br><p style="color:#BAC9DD;font-size:14px">' +
+              this.percentage.toFixed(2) +
+              ' %</p></br>'
+            )
+        }
+      }
+      this.option = {
+        chart: {
+          type: 'pie',
+          animation: false,
+          backgroundColor: 'transparent',
+          // width: this.charts.width || 362,
+          // height: this.charts.height || '100%',
+          reflow: true,
+          events: {
+            redraw: function () {
+              var each = that.$highcharts.each,
+                points = this.series[0].points
+              each(points, function (p, i) {
+                p.graphic.attr({
+                  translateY: -p.shapeArgs.ran,
+                })
+                p.graphic.side1.attr({
+                  translateY: -p.shapeArgs.ran,
+                })
+                p.graphic.side2.attr({
+                  translateY: -p.shapeArgs.ran,
+                })
+              })
+            },
+          },
+          options3d: {
+            enabled: true,
+            alpha: 65,
+            beta: 0,
+          },
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: false,
+            startAngle: this.charts.angle || 0,
+            cursor: 'pointer',
+            colors: that.$highcharts.map(colors, function (color) {
+              let starColor = that.$highcharts
+                .Color(color)
+                .brighten(0.3)
+                .get('rgb')
+              let endColor = that.$highcharts
+                .Color(color)
+                .brighten(-0.2)
+                .get('rgb')
+              return {
+                radialGradient: { cx: 0.5, cy: 0.5, r: 0.5 },
+                stops: [
+                  [0, starColor],
+                  [0.5, color],
+                  [1, endColor], // darken
+                ],
+              }
+            }),
+            innerSize: this.charts.innerSize || '50%',
+            depth: 35,
+            size: this.charts.size || 140,
+            // dataLabels: {
+            //   distance: this.charts.distance || 25,
+            //   enabled: false,
+            //   style: {
+            //     width: '100px',
+            //   },
+            // },
+            states: {
+              inactive: {
+                opacity: 0.1,
+              },
+            },
+            hover: {
+              enabled: false,
+            },
+            inactive: {
+              enabled: false,
+            },
+            states: {
+              inactive: {
+                opacity: 1,
+              },
+            },
+          },
+          series: {
+            shadow: {
+              color: '#000',
+              offsetX: 5,
+              offsetY: 5,
+              opacity: 0.5,
+            },
+            events: {
+              // mouseOver: function (event) {
+              // 	this.points.forEach((p) => {
+              // 		p.dataLabel.text.css({ fill: "yellow" });
+              // 	});
+              // },
+              // mouseOut: function (event) {},
+            },
+          },
+        },
+        title: {
+          floating: true,
+          text: '',
+          style: {
+            color: '#fff',
+          },
+        },
+        yAxis: {
+          min: 0,
+          softMax: 100,
+        },
+        series: [
+          {
+            type: 'pie',
+            name: 'Browser share',
+            data: data,
+            dataLabels: {
+              crop: false,
+              enabled: this.charts.enableLabels || false, //是否显示饼图的线形tip
+              distance: this.charts.distance || 25,
+              formatter: formatLabel,
+              style: {
+                textOutline: 'none', //去掉文字白边
+              },
+            },
+          },
+        ],
+        credits: {
+          enabled: false,
+        },
+        tooltip: {
+          enabled: false,
+        },
+      }
+    },
+    bindEvent() {
+      let self = this
+      window.addEventListener('resize', () => {
+        self.$refs.highcharts.chart.reflow()
+      })
+    },
+  },
+  computed: {
+    // getStyle() {
+    //   return {
+    //     height: this.height,
+    //   }
+    // },
+  },
+}
+</script>
+
+<style lang="less" scoped>
+@import '../../style/var.less';
+.pie-container {
+  position: relative;
+  // .bottom-img {
+  //   width: 50%;
+  //   height: 100%;
+  //   top: 16%;
+  //   left: 25%;
+  //   position: absolute;
+  //   background: url('@{imgUrl}/pie/pie-bottom.png') center center no-repeat;
+  //   background-size: 80%;
+  // }
+  .pie-bg {
+    position: absolute;
+    top: 75%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+}
+</style>

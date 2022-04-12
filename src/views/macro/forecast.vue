@@ -1,0 +1,220 @@
+<template>
+  <base-container :show-aside-left="false"
+                  :show-aside-right="false"
+                  :left="20"
+                  :right="20">
+    <div class="l-full forecast">
+      <div class="forecast-title l-mt-62">2021年深圳GDP预测值</div>
+      <forecast-card class="l-mt-32"
+                     @on-click="cardClick"
+                     :value="input"></forecast-card>
+      <number-count-to class="l-mt-68"
+                       v-bind="countTo"
+                       :transform="true"></number-count-to>
+
+      <el-dialog :visible.sync="visible"
+                 width="835"
+                 append-to-body
+                 center
+                 custom-class="dark-dialog">
+        <div slot="title"
+             class="dark-dialog-name">
+          请输入2021年深圳年用电量增速
+        </div>
+        <el-input class="dark-dialog-input l-mt-68"
+                  placeholder="请输入年用电量增速"
+                  type="number"
+                  v-model="input">
+          <template class="dark-dialog-input-append"
+                    slot="append">%</template>
+        </el-input>
+        <div class="dark-dialog-label l-mt-38">
+          用电量增速越接近真实数据预测越准确，去年年用电量增速为X.XX%
+        </div>
+        <span slot="footer">
+          <div :class="['dark-dialog-btn', 'l-mt-52',input? '': 'disabled']"
+               @click="onConfirm">确 定</div>
+        </span>
+      </el-dialog>
+    </div>
+  </base-container>
+</template>
+
+<script>
+import forecastCard from '@/components/forecast-card'
+export default {
+  components: {
+    forecastCard,
+  },
+  data() {
+    return {
+      countTo: {
+        startVal: 0,
+        endVal: null,
+        decimals: 2,
+        duration: 1000,
+      },
+      visible: false,
+      input: '',
+    }
+  },
+  methods: {
+    cardClick() {
+      this.visible = true
+    },
+    onConfirm() {
+      if (!this.input && (this.input === 0 || this.input === '')) {
+        this.$message({
+          showClose: true,
+          message: '请输入有效数字',
+          type: 'error',
+        })
+        return
+      }
+      this.visible = false
+      let x1 = 983.99 //去年用电总量
+      let x2 = 983.34 //当年用电总量(由去年以知的用电量推算出今年的用电量)
+      let x3 = 26927.09 //前年GDP
+      let x4 = 27670.24 //去年GDP
+      let result =
+        (-691.187053929112 -
+          4.20329952212177 * x1 +
+          7.05608691782334 * x2 * (1 + this.input / 100) -
+          0.19053034127356 * x3 +
+          1.17010718676171 * x4) *
+        100000000
+      this.countTo.endVal = result
+    },
+  },
+}
+</script>
+
+<style lang="less" scoped>
+@import '../../style/var.less';
+.forecast {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	&-title {
+		position: relative;
+		min-width: 614px;
+		min-height: 50px;
+
+		font-size: 48px;
+		font-family: ysbth;
+		background: linear-gradient(
+			0deg,
+			rgba(119, 216, 255, 1) 0%,
+			rgba(233, 248, 255, 1) 73.3154296875%,
+			rgba(255, 255, 255, 1) 100%
+		);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		text-align: center;
+		color: #fff;
+		&:after {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			background: url('@{imgUrl}/forecast/title.png') center center no-repeat;
+			background-size: 100% 100%;
+		}
+	}
+}
+
+/deep/ .dark-dialog {
+	min-height: 474px;
+	background: url('@{imgUrl}/dark-dialog/bg.png') center center no-repeat;
+	background-size: 100% 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+	&-name {
+		margin-top: 24px;
+		font-size: 24px;
+		font-family: ysbth;
+		color: #fff;
+    text-align-last: left;
+    width: 900px;
+	}
+	.el-dialog__headerbtn {
+		width: 29px;
+		height: 29px;
+		top: 40px;
+		right: 25px;
+		background: url('@{imgUrl}/dark-dialog/close.png') center center no-repeat;
+		background-size: 100% 100%;
+	}
+	.el-dialog__:before {
+		content: '';
+	}
+  .el-dialog__body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+	&-btn {
+    cursor: pointer;
+		display: inline-block;
+		font-size: 26px;
+		font-family: ysbth;
+		padding: 10px 36px;
+		background: url('@{imgUrl}/dark-dialog/btn.png') center center no-repeat;
+		background-size: 100% 100%;
+    &.disabled{
+      opacity: .5;
+    }
+	}
+	&-label {
+		font-size: 18px;
+
+		color: #c9e2ff;
+	}
+  input::-webkit-input-placeholder{
+    opacity: 0.2;
+    font-size: 38px;
+    position:relative;
+    top:-10px;
+  }
+  &-input{
+    padding-left: 61px;
+    opacity: 0.8;
+    font-weight: 400;
+    font-family: Impact;
+    font-size: 60px;
+    width: 540px;
+    position: relative;
+    background: url('@{imgUrl}/dark-dialog/input.png') center center no-repeat;
+   background-size: 100% 100%;
+    .el-input__inner{
+      height: 108px;
+      background:none;
+      border: none;
+      border-radius: 0;
+      // font-size: 38px;
+      text-align: center;
+      // color:rgba(255, 255, 255, 0.6)
+      
+      color: #00F0FF;
+      
+    }
+    .el-input-group__append{
+      padding-top: 20px;
+      font-size: 24px;
+      color: #fff;
+      background-color: transparent;
+      border : none;
+    }
+  }
+}
+
+/deep/ input[type=number]::-webkit-inner-spin-button,  
+/deep/ input[type=number]::-webkit-outer-spin-button {  
+    -webkit-appearance: none;  
+    margin: 0;  
+} 
+</style>

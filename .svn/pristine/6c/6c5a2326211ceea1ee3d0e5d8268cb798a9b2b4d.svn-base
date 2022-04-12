@@ -1,0 +1,342 @@
+<template>
+  <div class="report-scatter-map" style="height: 100%">
+    <v-chart
+      ref="map"
+      class="l-full"
+      :option="option"
+      :autoresize="true"
+    ></v-chart>
+  </div>
+</template>
+
+<script>
+import request from "@/request";
+import { imgBase64 } from "./mapData";
+// var newData = [];
+// mapData.forEach((item, index) => {
+//   if (item.value[2] > 50) {
+//     newData.push(item);
+//   }
+// });
+
+export default {
+  name: "report-scatter-map",
+  props: {
+    nowDate: {
+      type: String,
+      default: "截至2022-01-01",
+    },
+    mapData: {
+      type: Array,
+      default: [],
+    },
+  },
+  data() {
+    return {
+      geoMap: {},
+      option: {},
+      backIMg: imgBase64,
+      newData: [],
+    };
+  },
+  mounted() {
+    this.init();
+  },
+  methods: {
+    async init() {
+      this.reloNewData();
+      try {
+        let data = await this.fetchMapJson();
+        this.$echarts.registerMap("sz", data);
+        this.initGeoMap(data);
+        this.initOption();
+        this.initEvent();
+      } catch (error) {}
+    },
+    reloNewData() {
+      this.mapData.forEach((item, index) => {
+        if (item.value[2] > 50) {
+          this.newData.push(item);
+        }
+      });
+    },
+    fetchMapJson() {
+      return request.get(`${CONFIG.geojsonUrl}/shenzhen.json`);
+    },
+    initEvent() {
+      this.$refs.map.chart.on("click", (e) => {
+        console.log(e);
+      });
+    },
+    initGeoMap(data) {
+      data.features.map((item) => {
+        let obj = {};
+        let { name, center } = item.properties;
+        this.geoMap[name] = center;
+        obj = {
+          name,
+          center,
+        };
+        return obj;
+      });
+    },
+    convertData(data, prop = "value") {
+      var res = [];
+      for (var i = 0; i < data.length; i++) {
+        var geoCoord = this.geoMap[data[i].name];
+        if (geoCoord) {
+          res.push({
+            name: data[i].name,
+            value: geoCoord.concat(data[i][prop]),
+          });
+        }
+      }
+      return res;
+    },
+    initOption() {
+      let that = this;
+      this.option = {
+        tooltip: {
+          trigger: "item",
+        },
+        width: "100%",
+        backgroundColor: "transparent",
+        visualMap: {
+          show: false,
+          min: 0,
+          max: 100,
+          left: "left",
+          top: "bottom",
+          text: ["高", "低"],
+          textStyle: {
+            color: "#fff",
+          },
+          calculable: true,
+          seriesIndex: [0],
+          inRange: {
+            color: ["#33a6ff"],
+          },
+        },
+
+        grid: {
+          height: "100%",
+          width: "100%",
+        },
+        geo: [
+          {
+            map: "sz",
+            label: {
+              show: true,
+            },
+            top: "15%",
+            left: "50",
+            roam: false,
+            width: "90%",
+            height: "95%",
+            zoom: 0.75,
+            z: 1,
+            label: {
+              normal: {
+                show: false,
+                color: "#024b92",
+                fontSize: 16,
+              },
+              emphasis: {
+                color: "#fff",
+              },
+            },
+            itemStyle: {
+              normal: {
+                areaColor: "#194a81",
+                areaColor: {
+                  image: this.backIMg,
+                  repeat: "repeat",
+                },
+                borderColor: "#9fceff",
+                borderWidth: 2,
+                shadowColor: "#2a415e",
+                shadowBlur: 10,
+              },
+              emphasis: {
+                // 鼠标移入颜色
+                areaColor: "",
+              },
+            },
+            tooltip: {
+              trigger: "item",
+              padding: [0, 0, 0, 0],
+              borderWidth: 0,
+              confine: true,
+              extraCssText:
+                "background:transparent;width:600px;height:131px;box-shadow: none;",
+              formatter: function (params) {
+                var name = params.name;
+                var html =
+                  "<div class='tootipBack' >" +
+                  "<div class='toolTop'>" +
+                  "<div class='tool-name l-mt-12 l-ml-20'>" +
+                  name +
+                  "</div>" +
+                  "<div class='tool-date l-mt-12 l-mr-20'>" +
+                  that.nowDate +
+                  "</div>" +
+                  "</div>" +
+                  "<div class='toolBottom'>" +
+                  //深圳市商圈数量
+                  "<div class='tool-content' style='width:25%'>" +
+                  "<div class='content-name' >深圳市商圈数量</div>" +
+                  "<div class='content-box'><p class='content-val'>" +
+                  that.mapData.length +
+                  "</p><p class='content-unit'>个</p></div>" +
+                  "</div>" +
+                  //大型商圈
+                  "<div class='tool-content' style='width:15%'>" +
+                  "<div class='content-name' >大型商圈</div>" +
+                  "<div class='content-box'><p class='content-val'>" +
+                  that.mapData.filter((item) => {
+                    if (item.area == name) {
+                      return item;
+                    }
+                  }).length +
+                  "</p><p class='content-unit'>个</p></div>" +
+                  "</div>" +
+                  //商圈经济活力指数
+                  "<div class='tool-content' style='width:30%'>" +
+                  "<div class='content-name' >商圈经济活力指数</div>" +
+                  "<div class='content-box'><p class='content-val'>87.32</p><p class='content-unit'></p></div>" +
+                  "</div>" +
+                  //商圈用电量同比增长情况
+                  "<div class='tool-content' style='width:30%'>" +
+                  "<div class='content-name' >商圈用电量同比增长情况</div>" +
+                  "<div class='content-box'><p class='content-val'>+3.84</p><p class='content-unit'>%</p></div>" +
+                  "</div>" +
+                  //
+                  "</div>" +
+                  "</div>";
+                return html;
+              },
+            },
+          },
+        ],
+        series: [
+          {
+            mapType: "sz",
+            name: "AQI",
+            type: "scatter",
+            coordinateSystem: "geo",
+            data: this.mapData,
+            symbolSize: function (val) {
+              return val[2] / 10;
+            },
+            itemSymbol: "rect",
+            roam: false,
+            itemStyle: {
+              borderColor: "#97c4f3",
+            },
+            itemStyle: {
+              normal: {
+                shadowColor: "#32c0fc",
+                shadowBlur: 20,
+              },
+            },
+            tooltip: {
+              show: false,
+            },
+          },
+          {
+            roam: false,
+            name: "Top 10",
+            type: "effectScatter",
+            coordinateSystem: "geo",
+            data: this.newData,
+            symbolSize: function (val) {
+              return val[2] / 5;
+            },
+            showEffectOn: "render",
+            rippleEffect: {
+              brushType: "stroke",
+            },
+            hoverAnimation: true,
+            label: {
+              normal: {
+                formatter: "{b}",
+                position: "right",
+                show: false,
+              },
+            },
+            itemStyle: {
+              normal: {
+                color: "#33a6ff",
+                shadowBlur: 10,
+                shadowColor: "#32c0fc",
+              },
+            },
+            tooltip: {
+              show: false,
+            },
+            zlevel: 1,
+          },
+        ],
+      };
+    },
+  },
+};
+</script>
+
+<style lang="less">
+@import "../../style/var.less";
+.tootipBack {
+  position: relative;
+  background: url("@{imgUrl}/report/pageCenter/tooltipBG.png") no-repeat center
+    25%;
+  background-size: 115% 150%;
+  //   overflow: auto;
+  width: 600px;
+  // height: 151px;
+  height: auto;
+  padding: 5px;
+  .toolTop {
+    width: 100%;
+    height: 40px;
+    .tool-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+      float: left;
+    }
+    .tool-date {
+      float: right;
+      color: #c0d5fe;
+      font-size: 12px;
+    }
+  }
+  .toolBottom {
+    width: 100%;
+    // height: 82px;
+    padding: 10px 0;
+    display: flex;
+    .tool-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      .content-name {
+        font-size: 12px;
+        padding: 10px 0;
+      }
+      .content-box {
+        padding: 10px 0 10px 0;
+        display: flex;
+        align-items: baseline;
+        font-size: 14px;
+        .content-val {
+          font-size: 24px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+</style>

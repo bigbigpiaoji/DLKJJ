@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'din';
+  src: url('/static/font/D-DIN-Bold.otf');
+}
+.gradient-number-blue {
+  font-size: 50px;
+  font-family: 'digib';
+  background: linear-gradient(0deg, #0080ff, #33ddff);
+  color: transparent;
+  -webkit-background-clip: text;
+}
+.gradient-number-red {
+  font-size: 20px;
+  font-family: 'digib';
+  background: linear-gradient(0deg, #f63400, #ff873f);
+  color: transparent;
+  -webkit-background-clip: text;
+}

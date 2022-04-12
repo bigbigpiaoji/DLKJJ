@@ -1,0 +1,170 @@
+const  table=[
+    {
+       area: '工业',
+       areadegree: 608.23,
+       percentage:2.73,
+       lengths:160,
+       ishif:true,
+    },
+    {
+       area: '营利性服务业',
+       areadegree: 66.04,
+       percentage:8.69,
+       lengths:72,
+       ishif:true,
+    },
+    {
+       area: '金融业',
+       areadegree: 56.75,
+       percentage:5.73,
+       lengths:38,
+       ishif:true,
+    },
+    {
+       area: '批发和零售业',
+       areadegree: 39.21,
+       percentage:15.37,
+       lengths:12,
+       ishif:true,
+    },
+    {
+       area: '房地产业',
+       areadegree: 37.81,
+       percentage:19.03,
+       lengths:11,
+       ishif:true,
+    },
+    {
+       area: '非盈利性服...',
+       areadegree: 25.09,
+       percentage:7.76,
+       lengths:10,
+       ishif:true,
+    },
+    {
+       area: '建筑业',
+       areadegree: 23.30,
+       percentage:13.11,
+       lengths:10,
+       ishif:true,
+    },
+    {
+       area: '交通运输...',
+       areadegree: 22.46,
+       percentage:-0.75,
+       lengths:10,
+       ishif:false,
+       
+    },
+    {
+       area: '住宿和餐饮业',
+       areadegree: 20.28,
+       percentage:16.07,
+       lengths:9,
+       ishif:true,
+    },
+    {
+       area: '农林牧渔业',
+       areadegree: 17.22,
+       percentage:12.35,
+       lengths:8,
+       ishif:true,
+    },
+
+ ]
+ const tabletitle={
+   analysis:'各行业电耗价值分析',
+   datatime:'2021年1-4季度',
+   classification:'行业分类',
+   gdp:'每度电支持GDP',
+   company:'(单位：元/度)',
+   previous:'同比'
+ }
+ const consumption=[
+   {
+      area: '华星光电',
+      areadegree: 129140,
+      percentage:39.77,
+      lengths:180,
+      ishif:false,
+   },
+   {
+      area: '富士康',
+      areadegree:48674,
+      percentage:48.83,
+      lengths:72,
+      ishif:false,
+   },
+   {
+      area: '比亚迪',
+      areadegree: 26040,
+      percentage:36.78,
+      lengths:38,
+      ishif:false,
+   },
+   {
+      area: '中兴',
+      areadegree: 7540,
+      percentage:49.83,
+      lengths:12,
+      ishif:false,
+   },
+   {
+      area: '华为',
+      areadegree: 6370,
+      percentage:26.31,
+      lengths:11,
+      ishif:false,
+   },
+   {
+      area: '水务(集团)',
+      areadegree:5734,
+      percentage:39.22,
+      lengths:10,
+      ishif:false,
+   },
+   {
+      area: '赛意法微',
+      areadegree: 5133,
+      percentage:1.68,
+      lengths:10,
+      ishif:false,
+   },
+   {
+      area: '欣旺达电子',
+      areadegree: 4903,
+      percentage:44.35,
+      lengths:10,
+      ishif:false,
+      
+   },
+   {
+      area: '华生电机',
+      areadegree: 4546,
+      percentage:50.78,
+      lengths:9,
+      ishif:false,
+   },
+   {
+      area: '深南电路',
+      areadegree: 3994,
+      percentage:48.3,
+      lengths:8,
+      ishif:false,
+   },
+
+]
+const powertitle={
+   analysis:'深圳市电耗TOP10企业',
+   datatime:'',
+   classification:'企业名称    ',
+   gdp:'用电量',
+   company:'(单位：万千瓦时)',
+   previous:'同比'
+}
+ export {
+      table,
+      tabletitle,
+      consumption,
+      powertitle
+ }

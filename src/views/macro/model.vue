@@ -1,0 +1,59 @@
+<template>
+  <base-container :show-aside-left="false" :show-aside-right="false">
+    <div class="inside-title">
+      <span class="inside-title-content">GDP预测模型</span>
+    </div>
+    <div class="boximg">
+      <div style="height: 40%"><modeling-gdp-all></modeling-gdp-all></div>
+      <div style="height: 60%"><modelingLineChartAll></modelingLineChartAll></div>
+    </div>
+  </base-container>
+</template>
+
+<script>
+import modelingGdpAll from "@/components/modeling-gdp-all";
+import modelingLineChartAll from "@/components/modeling-line-chart-all"; 
+
+export default {
+  components: {
+    modelingGdpAll,
+    modelingLineChartAll,
+  },
+  data() {
+    return {};
+  },
+};
+</script>
+
+<style lang="less" scoped>
+@import "../../style/var.less";
+.inside-title {
+  //  min-width: 1700px;
+  text-align: center;
+  line-height: 21px;
+  font-size: 28px;
+  font-family: ysbth;
+  font-weight: 400;
+  color: #ffffff;
+  opacity: 0.89;
+
+  background: linear-gradient(
+    0deg,
+    rgba(119, 216, 255, 1) 0%,
+    rgba(233, 248, 255, 1) 73.3154296875%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  &-content {
+    margin-right: 4px;
+  }
+}
+
+.boximg {
+  // min-width: 1700px;
+  height: 95%;
+  background: url("@{imgUrl}/model-img/big-box.png") center center no-repeat;
+  background-size: 100% 100%;
+}
+</style>

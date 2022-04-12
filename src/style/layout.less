@@ -1,0 +1,68 @@
+.l-full {
+  width: 100%;
+  height: 100%;
+  &-scroll {
+    overflow: auto;
+  }
+}
+.l-box {
+  display: flex;
+}
+.l-box-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.l-box-justify-sapce-around{
+  display: flex;
+  justify-content: space-around;
+}
+
+.l-flex {
+  flex: 1;
+}
+
+.loop(@counter) when (@counter > 0) {
+  .l-p-@{counter} {
+    padding: (1px * @counter) !important;
+  }
+  .l-pt-@{counter} {
+    padding-top: (1px * @counter) !important;
+  }
+  .l-pr-@{counter} {
+    padding-right: (1px * @counter) !important;
+  }
+  .l-pb-@{counter} {
+    padding-bottom: (1px * @counter) !important;
+  }
+  .l-pl-@{counter} {
+    padding-left: (1px * @counter) !important;
+  }
+  .l-m-@{counter} {
+    margin: (1px * @counter) !important;
+  }
+  .l-mt-@{counter} {
+    margin-top: (1px * @counter) !important;
+  }
+  .l-mr-@{counter} {
+    margin-right: (1px * @counter) !important;
+  }
+  .l-mb-@{counter} {
+    margin-bottom: (1px * @counter) !important;
+  }
+  .l-ml-@{counter} {
+    margin-left: (1px * @counter) !important;
+  }
+  .l-fz-@{counter} {
+    font-size: (1px * @counter) !important;
+  }
+  .l-maxw-@{counter} {
+    max-width: (1px * @counter) !important;
+  }
+  .l-minw-@{counter},.l-mw-@{counter} {
+    min-width: (1px * @counter) !important;
+  }
+  .loop((@counter - 1)); // 递归调用自身
+}
+
+.loop(200);

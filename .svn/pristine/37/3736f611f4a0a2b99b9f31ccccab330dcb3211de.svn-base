@@ -1,0 +1,268 @@
+<template>
+       <div class="industry-consumption">
+          <div class="industry-title">
+              <div class="title-left">{{tabtitle.analysis}}</div>
+              <div class="title-right">{{tabtitle.datatime}}</div>
+          </div>
+          <div class="industry-classification">
+             <div class="classification-left">{{tabtitle.classification}}</div>
+             <div class="classification-middle">
+                 <span class="middle-left">{{tabtitle.gdp}}</span>
+                 <span class="middle-right">{{tabtitle.company}}</span>
+             </div>
+             <div class="classification-right">{{tabtitle.previous}}</div>
+          </div>
+          <div class="industrys" v-for="(item,index) in tabledata" :key="index">
+             <div class="industrys-left">{{item.area}}</div>
+             <div class="industrys-middle">
+               <div class="middle-imm"></div>
+               <div class="middle-ith">
+                  <div  class="middle-ithleft" :style="{width:item.lengths + 'px'}"></div>
+                  <div  class="middle-ithright">{{item.areadegree}}</div>
+               </div>
+             </div>
+             <div class="industrys-right">
+                <div class="industrys-rightimg">
+                   <div :class="item.ishif?'industrys-rightimgup':'industrys-rightimgdown'"></div>
+                </div>
+                <div class="industrys-rightnum">{{item.percentage + '%'}}</div>
+             </div>
+          </div>
+       </div>
+</template>
+
+<script>
+export default {
+    name:'industry-analysis',
+    props:{
+      data:{
+        type:Array,
+        default:()=>[]
+      }
+    },
+    data(){
+      return {
+         
+      }
+   },
+   props:{
+       tabledata:{
+         type:Array,
+         
+       },
+       tabtitle:{
+          type:Object,
+         
+       }
+   }
+}
+</script>
+
+<style lang="less" scoped>
+@import "../../style/var.less";
+.industry-consumption{
+  // border: 1px solid red;
+   width: 90%;
+   height: 370px;
+   margin-top: 494px;
+   margin-left: 24px;
+
+}
+.industry-title{
+  height: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+.title-left{
+  width:170px;
+  height: 16px;
+  // border: 1px solid red;
+   font-family: ysbth;
+	font-size: 16px;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #c7e5ff;
+  text-align: left;
+  line-height: 16px;
+}
+.title-right{
+  width:100px;
+  height: 16px;
+//  border: 1px solid red;
+  font-family: MicrosoftYaHei;
+	font-size: 11px;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #c0d5fe;
+   text-align: right;
+  line-height: 16px;
+}
+.industry-classification{
+ // width: 401px;
+  height: 20px;
+  margin-top: 20px;
+   display: flex;
+   justify-content: space-between;
+}
+// .industry-classification div{
+//   border: 1px solid red;
+// }
+.classification-left{
+  width: 90px;
+  height: 16px;
+  margin-left: 1px;
+  font-family: MicrosoftYaHei-Bold;
+	font-size: 12px;
+	font-weight: bold;
+	color: #ffffff;
+  text-align: left;
+}
+.classification-middle{
+   width:200px;
+   height: 16px;
+  text-align: left;
+  .middle-left{
+    font-family: MicrosoftYaHei-Bold;
+    font-size: 12px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1)
+    
+  }
+  .middle-right{
+      font-family: MicrosoftYaHei;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 1);
+      margin-left: 5px;
+  }
+}
+
+.classification-right{
+  width: 80px;
+  height: 16px;
+  font-family: MicrosoftYaHei-Bold;
+	font-size: 12px;
+	font-weight: bold;
+	color: rgba(255, 255, 255, 1);
+    text-align: right;
+}
+.industrys{
+ // width: 401px;
+  height: 20px;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+// .industrys div{
+//     border: 1px solid red;
+// } 
+.industrys-left{
+ // border: 1px solid red;
+  width: 90px;
+  height: 16px;
+  font-family: MicrosoftYaHei;
+	font-size: 14px;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: rgba(211, 218, 242, 1);
+  text-align: left;
+  line-height: 16px;
+}
+.industrys-middle{
+   width: 200px;
+   height: 16px;
+ //  border: 1px solid red;
+}
+.middle-imm{
+  width: 90%;
+  height: 1px;
+  margin-top: 5px;
+  background-color: #1c2e4e;
+}
+.middle-ith{
+   display: flex; 
+}
+.industry-ana{
+   .middle-ithleft{
+  width: 90%;
+	height: 6px;
+  margin-top: -3px;
+  line-height: 6px;
+	background-image: linear-gradient(90deg, 
+		rgba(74, 69, 48, 0.5) 0%, 
+		#ffcc00 100%), 
+}
+}
+.industry-sis{
+   .middle-ithleft{
+  width: 90%;
+	height: 6px;
+  margin-top: -3px;
+  line-height: 6px;
+	background-image: linear-gradient(90deg, 
+		rgba(46, 102, 138, 0.5) 0%, 
+		rgba(31, 252, 255, 1) 100%), 
+}
+}
+.middle-ithright{
+     margin-left: 5px;
+    margin-top: -8px;
+    font-family: MicrosoftYaHei;
+	font-size: 12px;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: rgba(255, 255, 255, 1);
+}
+.industrys-right{
+  width: 80px;
+  height: 16px;
+ // margin-left: 10px;
+// border: 1px solid red;
+  background-color: rgba(29, 86, 140, 0.2);
+	border-radius: 2px;
+//	opacity: 0.2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.industrys-rightimg{
+  width: 16px;
+  height: 16px;
+  //border: 1px solid red;
+  position: relative;
+}
+.industrys-rightimgup{
+   width: 12px;
+   height: 16px;
+   position: absolute;
+   background: url('@{imgUrl}/industry/up.png') no-repeat center center;
+   background-size: contain;
+  // margin-top: -1px;
+  
+}
+.industrys-rightimgdown{
+   width: 12px;
+   height: 16px;
+   position: absolute;
+   background: url('@{imgUrl}/industry/down.png') no-repeat;
+   background-size: contain;
+   margin-top: 4px;
+}
+.industrys-rightnum{
+  width: 40px;
+	height: 12px;
+  margin-left: 5px;
+ // border: 1px solid red;
+  font-family: MicrosoftYaHei;
+	font-size: 12px;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #ffffff;
+  align-items: center;
+  line-height: 12px;
+}
+</style>

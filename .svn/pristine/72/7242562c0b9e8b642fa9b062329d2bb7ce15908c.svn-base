@@ -1,0 +1,108 @@
+<template>
+  <div class="base-layout-content"
+       :style="{marginLeft:left+'px',marginRight:right+'px'}">
+    <aside class="base-layout-left"
+           :style="{width:asideLeftWidth + 'px',minWidth:asideLeftWidth + 'px'}"
+           v-if="showAsideLeft">
+      <slot name="left"></slot>
+    </aside>
+
+    <main class="base-layout-main">
+      <slot></slot>
+    </main>
+
+    <aside class="base-layout-right"
+           :style="{width:asideRightWidth + 'px',minWidth:asideRightWidth + 'px'}"
+           v-if="showAsideRight">
+      <slot name="right"></slot>
+    </aside>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'base-container',
+  props: {
+    showAside: {
+      type: Boolean,
+      default: true,
+    },
+    showAsideLeft: {
+      type: Boolean,
+      default: true,
+    },
+    showAsideRight: {
+      type: Boolean,
+      default: true,
+    },
+    asideLeftWidth: {
+      type: [String, Number],
+      default: 400,
+    },
+    asideRightWidth: {
+      type: [String, Number],
+      default: 400,
+    },
+    left: {
+      type: [String, Number],
+      default: 0,
+    },
+    right: {
+      type: [String, Number],
+      default: 0,
+    },
+    bottom: {
+      type: [String, Number],
+      default: 0,
+    },
+  },
+  data() {
+    return {}
+  },
+  methods: {},
+  mounted() {},
+}
+</script>
+
+<style lang="less">
+@import '../../style/var.less';
+@base-layout: base-layout;
+.@{base-layout} {
+  
+  &-content {
+  //   background: #08090c url('@{imgUrl}/bg/bg.png') center center no-repeat;
+  // background-size: cover;
+    display: flex;
+    position: relative;
+    // width: 100%;
+    flex: 1;
+    
+    // max-height: 1000px;
+    // overflow: hidden;
+    // overflow: auto;
+  }
+  &-footer {
+    position: relative;
+  }
+  &-left {
+    // width: 450px;
+    // height: 100%;
+    z-index: 10;
+    // background-color: green;
+  }
+  &-right {
+    // width: 450px;
+    // height: 100%;
+    z-index: 10;
+    // background-color: yellow;
+  }
+  &-main {
+    position: relative;
+    flex: 1;
+    width: 0;
+    // height: 100%;
+    z-index: 10;
+    // overflow: hidden;
+  }
+}
+</style>

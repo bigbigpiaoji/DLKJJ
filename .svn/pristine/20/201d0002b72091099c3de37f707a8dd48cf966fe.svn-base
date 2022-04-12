@@ -1,0 +1,90 @@
+<template>
+  <div class="nav-menu-wrap">
+    <div class="nav-menu"
+         v-for="(item, index) in data"
+         :key="item.value"
+         :class="[selected === item.value ? 'active' : '']"
+         @click="handleClick(item, index)">
+      <span>{{ item.name }}</span>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'nav-menu',
+  props: {
+    data: {
+      type: Array,
+      default: () => [],
+    },
+
+    value: {
+      type: String,
+      default: '',
+    },
+    autoRoute: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      selected: '',
+    }
+  },
+  watch: {
+    value: {
+      immediate: true,
+      handler(val) {
+        this.selected = val
+      },
+    },
+    selected(val) {
+      this.$emit('input', val)
+      this.$emit('change', val)
+    },
+  },
+  methods: {
+    handleClick(item, index) {
+      this.selected = item.value
+      this.$emit('changeType', item.type)
+      if (this.autoRoute) {
+        this.$router.replace({
+          name: item.value,
+        })
+      }
+    },
+  },
+  computed: {},
+}
+</script>
+
+<style lang="less" scoped>
+@import "../../style/var.less";
+
+.nav-menu {
+  position: relative;
+  padding: 18px 20px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 22px;
+  margin-left: 40PX;
+  color: rgba(255,255,255,.7);
+  font-family: ysbth;
+  font-weight: normal;
+  min-width: 120px;
+  &:hover,
+  &.active {
+    color: #fff;
+    background: url("@{imgUrl}/nav-menu/bg.png") center center no-repeat;
+    background-size: 100% 60%;
+    
+  }
+  &-wrap {
+    display: inline-flex;
+    align-items: center;
+    // justify-content: space-around;
+  }
+}
+</style>

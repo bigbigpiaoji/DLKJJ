@@ -1,0 +1,21 @@
+// 电力看经济
+// 静态图片资源url
+// @imgUrl: '/dist/static/img';
+// 字体库资源url
+// @fontUrl: '/dist/static/font';
+
+// 能源双碳环境
+// 静态图片资源url
+// @imgUrl: '/nydsj/static/img';
+// 字体库资源url
+// @fontUrl: '/nydsj/static/font';
+
+// 开发环境
+// 静态图片资源url
+@imgUrl: '/static/img';
+// // 字体库资源url
+@fontUrl: '/static/font';
+
+// tab激动活颜色
+@cyan: '#00FFEA';
+

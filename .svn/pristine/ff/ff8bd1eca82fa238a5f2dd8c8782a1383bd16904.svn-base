@@ -1,0 +1,557 @@
+<template>
+  <div class="area-electricity-map-wrap">
+    <!-- <button @click="draw">开始绘制</button>
+    <button @click="clearDraw">取消绘制</button> -->
+    <div class="area-electricity-map"
+         id="area-electricity-map"></div>
+    <div class="area-electricity-map-bottom">
+      <div class="area-electricity-map-icon"></div>
+      <div class="area-electricity-map-address">当前位置 : </div>
+      <slot name="bottom"></slot>
+    </div>
+  </div>
+</template>
+
+<script>
+let map = null
+
+var draw = null
+var markerGroup = null
+export default {
+  name: 'area-electricity-map',
+  props: {
+    data: {
+      type: Array,
+      default: () => [
+        {
+          name: '坪山区',
+          lng: 114.35277862548634,
+          lat: 22.683543869431603,
+        },
+        {
+          name: '光明区',
+          lng: 113.92259521484192,
+          lat: 22.783229564426208,
+        },
+        {
+          name: '宝安区',
+          lng: 113.84637756347564,
+          lat: 22.661625845544663,
+        },
+        {
+          name: '龙华区',
+          lng: 114.01941223144365,
+          lat: 22.714840770320734,
+        },
+        {
+          name: '南山区',
+          lng: 113.9665405273418,
+          lat: 22.60268524306848,
+        },
+        {
+          name: '福田区',
+          lng: 114.04550476074138,
+          lat: 22.551329302202106,
+        },
+        {
+          name: '罗湖区',
+          lng: 114.13751525878752,
+          lat: 22.579228731137476,
+        },
+        {
+          name: '龙岗区',
+          lng: 114.22932784674447,
+          lat: 22.707505037211078,
+        },
+        {
+          name: '盐田区',
+          lng: 114.25836486816314,
+          lat: 22.611559637833523,
+        },
+        {
+          name: '大鹏新区',
+          lng: 114.4712249755849,
+          lat: 22.619165806300046,
+        },
+        {
+          name: '深汕合作区',
+          lng: 115.03908081056159,
+          lat: 22.88511588118915,
+        },
+      ],
+    },
+    geoJsonSource: {
+      type: Object,
+      default: () => ({
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: {
+              value: 1200,
+              name: '坪山区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [114.35277862548634, 22.683543869431603],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              value: 182.7,
+              name: '光明区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [113.92259521484192, 22.783229564426208],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              value: 182.7,
+              name: '宝安区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [113.84637756347564, 22.661625845544663],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              value: 1982.7,
+              name: '龙华区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [114.01941223144365, 22.714840770320734],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              value: 5682.7,
+              name: '南山区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [113.9665405273418, 22.60268524306848],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              value: 4682.7,
+              name: '福田区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [114.04550476074138, 22.551329302202106],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              value: 3182.7,
+              name: '罗湖区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [114.13751525878752, 22.579228731137476],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              value: 582.7,
+              name: '龙岗区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [114.22932784674447, 22.707505037211078],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              value: 82.7,
+              name: '盐田区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [114.25836486816314, 22.611559637833523],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              value: 882.7,
+              name: '大鹏新区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [114.4712249755849, 22.619165806300046],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              value: 2182.7,
+              name: '深汕合作区',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [115.03908081056159, 22.88511588118915],
+            },
+          },
+        ],
+      }),
+    },
+  },
+  data() {
+    return {
+      displayData: [],
+    }
+  },
+  watch: {},
+  computed: {},
+  mounted() {
+    this.init()
+  },
+  methods: {
+    init() {
+      this.initMap()
+      this.initEvent()
+      this.initname()
+      map.on('load', this.onMapLoad)
+    },
+
+    rand(min, max) {
+      return min + (max - min) * Math.random()
+    },
+    createRandomGeoJson(num = 0, start = [113.8, 114.4], end = [22.6, 22.7]) {
+      let ret = []
+      for (let i = 0; i < num; i++) {
+        let item = {
+          type: 'Feature',
+          properties: {
+            value: this.rand(100, 2000),
+            name: '',
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: [this.rand(...start), this.rand(...end)],
+          },
+        }
+        ret.push(item)
+      }
+      return ret
+    },
+
+    initname() {},
+
+    initMap() {
+      map = new WebGIS.Map({
+        backgroundColor: 'transparent',
+        container: 'area-electricity-map',
+        zoom: 8.6,
+        psr: {
+          unload: true,
+        },
+        style: 'webgis://styles/deepblue',
+        center: [114.4, 22.7],
+        overviewMap: true,
+      })
+    },
+    initEvent() {
+      map.on('click', (e) => {
+        console.log(e)
+      })
+    },
+    flyTo(opt) {
+      map.flyTo(opt)
+    },
+    initHeatMap() {
+      let marker = new WebGIS.Graphics.Popup({})
+      marker
+        .setLngLat([115.03908081056159, 22.88511588118915])
+        .addTo(map)
+        .setHTML(`<div class="area-label">深汕合作区</div>`)
+      var heatmap = new WebGIS.Charts.HeatMap(map)
+      this.geoJsonSource.features = [
+        ...this.geoJsonSource.features,
+        ...this.createRandomGeoJson(200),
+        ...this.createRandomGeoJson(50, [113.82, 113.96], [22.7, 22.8]),
+        ...this.createRandomGeoJson(100, [113.9, 114.11], [22.53, 22.59]),
+        ...this.createRandomGeoJson(
+          50,
+          [114.2347979702995, 114.30895568514302],
+          [22.77702249238152, 22.71876488353574]
+        ),
+        ...this.createRandomGeoJson(
+          50,
+          [114.42865295409104, 114.53714294432609],
+          [22.647417848646285, 22.60875673791753]
+        ),
+        ...this.createRandomGeoJson(
+          50,
+          [114.49985051848785, 114.59182231328072],
+          [22.534371750117373, 22.510681813667034]
+        ),
+        ...this.createRandomGeoJson(
+          10,
+          [114.97544707248613, 115.08737029025991],
+          [22.909199330148482, 22.83644407027427]
+        ),
+      ]
+      heatmap.setGeoJsonSource(this.geoJsonSource, 'value', 0, 2000, {
+        radius: [
+          {
+            zoom: 1,
+            value: 20,
+          },
+        ],
+        colors: [],
+      })
+
+      heatmap.setVisiable(true)
+    },
+    onMapLoad() {
+      this.initHeatMap()
+
+      // var geometricalQuery = new WebGIS.SpatialAnalyst.GeometricalQuery()
+      // var center = [114.07045838078943, 22.66321761877832]
+      // var radius = 2000
+      // var range = { center, radius }
+      // var ptrtypes = [301, 311, 312]
+      // var attrnamelist = ['DEV_ID']
+      // var aim = { ptrtypes, attrnamelist }
+      // geometricalQuery.queryByCircle(
+      //   range,
+      //   aim,
+      //   function (res) {
+      //     console.log('data', res)
+      //     console.log(res.toPolygon())
+      //     // dealData(res)
+      //   },
+      //   function (res) {
+      //     console.log('err', res)
+      //     // dealData(res)
+      //   }
+      // )
+
+      // this.draw()
+
+      // this.createMarkGroup()
+      // var polygonFeature = WebGIS.Tools.Feature.toPolygon(
+      //   [
+      //     [
+      //       [113.7877757167995, 22.826990348791625],
+      //       [114.05596183391799, 22.813628508549925],
+      //       [113.87837913474482, 22.691641234579592],
+      //       [113.7877757167995, 22.826990348791625],
+      //     ],
+      //   ],
+      //   { name: 'polygon_1' }
+      // )
+      // var pointFeature = WebGIS.Tools.Feature.toPoint(
+      //   [113.83307742577199, 22.784394913675797],
+      //   { name: 'point_1' }
+      // )
+
+      // var geometric = new WebGIS.Tools.Geometric()
+
+      // var has = geometric.booleanContains(polygonFeature, pointFeature)
+      // console.log(has)
+    },
+    clearDraw() {
+      draw && draw.clearMapDraw()
+      markerGroup && markerGroup.removeLayer()
+    },
+    draw() {
+      this.clearDraw()
+      let startDrawPolygonAction = () => {
+        if (!draw) draw = new WebGIS.Tools.Draw(map)
+        console.log('draw', draw)
+        map.setEdgeAutoExtend(false)
+
+        draw.startDrawPolygon(
+          '',
+          function (e) {
+            console.log('绘制面过程点击', e)
+          },
+          (e) => {
+            console.log('绘制面完成', e)
+            map.setEdgeAutoExtend(false)
+            this.createMarkGroup(e)
+            // setTimeout(() => {
+            //   draw.clearMapDraw()
+            // }, 1000)
+          }
+        )
+      }
+      startDrawPolygonAction()
+    },
+
+    createMarkGroup(polygon = []) {
+      var pointArray = [
+        {
+          id: 'test1',
+          url: 'https://wangbase.com/blogimg/asset/202107/bg2021072117.png',
+          iconSize: [40, 40],
+          point: [113.8530101777194, 22.77353512491365],
+        },
+        {
+          id: 'test2',
+          url: 'https://wangbase.com/blogimg/asset/202107/bg2021072117.png',
+          iconSize: [40, 40],
+          point: [114.27884624206428, 22.765180853167635],
+        },
+        {
+          id: 'test3',
+          url: 'https://avatars.githubusercontent.com/u/15830532?s=40&v=4',
+          iconSize: [40, 40],
+          point: [113.92911704879441, 22.544443631606725],
+        },
+        {
+          id: 'test4',
+          url: 'https://avatars.githubusercontent.com/u/15830532?s=40&v=4',
+          iconSize: [40, 40],
+          point: [114.46005307795491, 22.63813306709153],
+        },
+      ]
+
+      var polygonFeature = WebGIS.Tools.Feature.toPolygon(
+        [polygon.map((item) => [item.lng, item.lat])],
+        {
+          name: 'polygon_1',
+        }
+      )
+
+      var geometric = new WebGIS.Tools.Geometric()
+
+      var renderPoint = pointArray
+        .map((item) => {
+          var pointFeature = WebGIS.Tools.Feature.toPoint(item.point, {
+            ...item,
+          })
+          return pointFeature
+        })
+        .filter((pointFeature) => {
+          return geometric.booleanContains(polygonFeature, pointFeature)
+        })
+
+      // var p = WebGIS.Tools.Feature.toPoint(point, {
+      //   id: 'test1',
+      //   url: 'https://wangbase.com/blogimg/asset/202107/bg2021072117.png',
+      //   iconSize: [40, 40],
+      // })
+      markerGroup = new WebGIS.Graphics.MarkerGroup(map)
+      var markerGroupData = {
+        type: 'FeatureCollection',
+        features: [
+          // p,
+          // {
+          //   type: 'Feature',
+          //   properties: {
+          //     id: 'test1',
+          //     url: 'https://wangbase.com/blogimg/asset/202107/bg2021072117.png',
+          //     iconSize: [40, 40],
+          //   },
+          //   geometry: {
+          //     type: 'Point',
+          //     coordinates: [114.11, 23.05],
+          //   },
+          // },
+          ...renderPoint,
+          // {
+          //   type: 'Feature',
+          //   properties: {
+          //     id: 'test2',
+          //     url: 'https://avatars.githubusercontent.com/u/15830532?s=40&v=4',
+          //     iconSize: [40, 40],
+          //   },
+          //   geometry: {
+          //     type: 'Point',
+          //     coordinates: [114.25836486816314, 22.611559637833523],
+          //   },
+          // },
+        ],
+      }
+      // markerGroup.append(p)
+      markerGroup.setData(markerGroupData, {}, { layerId: 'layer_test' })
+
+      markerGroup.on('click', (e) => {
+        console.log('markerGroup click', e)
+      })
+      // markerGroup.setMarkerVisibilility(['test1'], false)
+      // setTimeout(() => {
+      //   markerGroup.setMarkerVisibilility(['test1'], true)
+      // }, 1000)
+    },
+
+    onBack() {
+      adminDivision.clickReductionLayer()
+      map.instance.triggerRepaint()
+    },
+    zoomToOrganization() {
+      adminDivision.specifiedArea(8002)
+      map.instance.triggerRepaint()
+    },
+  },
+}
+</script>
+
+<style lang="less">
+@import "../../style/var.less";
+.area-label{
+
+  color: rgba(0, 204, 255,0.5);
+text-shadow: 0px 0px 10px #000
+}
+.mapboxgl-popup-tip{
+  display: none !important;
+}
+.mapboxgl-popup-content{
+  background: unset !important;
+  box-shadow:unset !important;
+}
+.mapboxgl-popup-close-button,.mapboxgl-popup-close-button:hover{
+  display: none !important;
+}
+.area-electricity-map{
+ 
+  height: 100%;
+  &-wrap{
+    position: relative;
+    height: 100%;
+  }
+  &-bottom{
+    position: absolute;
+    right: 16px;
+    bottom: 26px;
+    display: flex;
+    align-items: center;
+  }
+  &-icon{
+    width: 24px;
+    height: 24px;
+    background: url('@{imgUrl}/map/address.png') no-repeat center center;
+    background-size: contain;
+    margin-right: 10px;
+  }
+  &-address{
+    font-size: 1px;
+    color: #C0D5FE;
+  }
+}
+
+
+
+
+
+
+
+</style>

@@ -1,0 +1,225 @@
+<template>
+  <!-- <screen-adapter> -->
+
+  <div class="base-layout">
+    <div :style="getInnerStyle"
+         class="base-layout-inner">
+      <slot name="header">
+
+        <base-header :title="title"></base-header>
+      </slot>
+      <base-container v-bind="$props"
+                      title="">
+        <div slot="left">
+          <slot slot
+                name="left"></slot>
+        </div>
+        <!-- <div> -->
+        <slot></slot>
+        <!-- </div> -->
+        <div slot="right">
+
+          <slot name="right"></slot>
+        </div>
+      </base-container>
+      <!-- <div class="base-layout-content"
+            :style="{marginLeft:left+'px',marginRight:right+'px'}">
+
+          <aside class="base-layout-left"
+                :style="{width:asideLeftWidth + 'px',minWidth:asideLeftWidth + 'px'}"
+                v-if="showAside">
+            <slot name="left"></slot>
+          </aside>
+
+          <main class="base-layout-main">
+            <slot></slot>
+          </main>
+
+          <aside class="base-layout-right"
+                :style="{width:asideRightWidth + 'px',minWidth:asideRightWidth + 'px'}"
+                v-if="showAside">
+            <slot name="right"></slot>
+          </aside>
+        </div> -->
+      <footer class="base-layout-footer">
+        <slot name="footer"></slot>
+      </footer>
+    </div>
+  </div>
+  <!-- </screen-adapter> -->
+</template>
+
+<script>
+export default {
+  name: 'base-layout',
+  props: {
+    title: {
+      type: String,
+      default: '深圳经济电力基因图谱',
+    },
+    showAside: {
+      type: Boolean,
+      default: true,
+    },
+    showAsideLeft: {
+      type: Boolean,
+      default: true,
+    },
+    showAsideRight: {
+      type: Boolean,
+      default: true,
+    },
+    asideLeftWidth: {
+      type: [String, Number],
+      default: 440,
+    },
+    asideRightWidth: {
+      type: [String, Number],
+      default: 440,
+    },
+    left: {
+      type: [String, Number],
+      default: 0,
+    },
+    right: {
+      type: [String, Number],
+      default: 0,
+    },
+    bottom: {
+      type: [String, Number],
+      default: 0,
+    },
+    backgroundImage: {
+      type: String,
+      default: 'bg',
+    },
+    backgroundColor: {
+      type: String,
+      default: '#040916',
+    },
+    showFooterBackground: {
+      type: true,
+      default: true,
+    },
+  },
+  data() {
+    return {
+      visible: false,
+    }
+  },
+  computed: {
+    getInnerStyle() {
+      let footerBg = this.showFooterBackground
+        ? `url(${CONFIG.imgUrl}/bg/bg-bottom.png) no-repeat center bottom,`
+        : ''
+      return {
+        bottom: this.bottom + 'px',
+        // backgroundColor: `${this.backgroundColor}`,
+        // backgroundImage: `url(${CONFIG.imgUrl}/bg/${this.backgroundImage}.png),url(${CONFIG.imgUrl}/bg/bg-left.png)`,
+
+        background: `
+          ${footerBg}
+          url(${CONFIG.imgUrl}/bg/bg-left.png) no-repeat 0.4% center,
+          url(${CONFIG.imgUrl}/bg/bg-right.png) no-repeat 99.6% center,
+          ${this.backgroundColor} url(${CONFIG.imgUrl}/bg/${this.backgroundImage}.png) no-repeat center center
+        `,
+      }
+    },
+  },
+  methods: {},
+  mounted() {},
+}
+</script>
+
+<style lang="less">
+@import '../../style/var.less';
+@base-layout: base-layout;
+.@{base-layout} {
+  min-width: 1700PX;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  // position: absolute;
+  // left: 0;
+  // top: 0;
+  // right: 0;
+  // bottom: 0;
+
+  
+  z-index: 10;
+  overflow: auto;
+  &-inner {
+    // position: absolute;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    // top: 0px;
+    // left: 0px;
+    // right: 0px;
+    // background: #08090c url('@{imgUrl}/bg/bg.png') center center no-repeat;
+    // background-size: 100% 100%;
+    position: relative;
+    // &::after{
+    //   position: absolute;
+    //   left: 0;
+    //   top: 0;
+    //   content : '';
+    //   background: red url('@{imgUrl}/bg/bg-left.png') left center no-repeat;
+    // }
+  }
+  // &-header {
+  //   width: 100%;
+  //   height: 80px;
+  //   background: url('@{imgUrl}/header/bg.png') center -20px no-repeat;
+  //   text-align: center;
+  //   // background-size: contain;
+  // }
+  // &-title {
+  //   margin-top: 6px;
+  //   font-size: 40px;
+  //   font-weight: 400;
+  //   color: #b6eafe;
+  //   background: linear-gradient(0deg, #bde8ff 0%, #49baf5 100%);
+  //   -webkit-background-clip: text;
+  //   -webkit-text-fill-color: transparent;
+  // }
+  &-content {
+  //   background: #08090c url('@{imgUrl}/bg/bg.png') center center no-repeat;
+  // background-size: cover;
+    display: flex;
+    position: relative;
+    // width: 100%;
+    flex: 1;
+    
+    // max-height: 1000px;
+    // overflow: hidden;
+    // overflow: auto;
+  }
+  &-footer {
+    position: relative;
+  }
+  &-left {
+    // width: 450px;
+    // height: 100%;
+    z-index: 10;
+    // background-color: green;
+  }
+  &-right {
+    // width: 450px;
+    // height: 100%;
+    z-index: 10;
+    // background-color: yellow;
+  }
+  &-main {
+    position: relative;
+    flex: 1;
+    width: 0;
+    display: flex;
+    flex-direction: column;
+    // height: 100%;
+    z-index: 10;
+    // overflow: hidden;
+  }
+}
+</style>

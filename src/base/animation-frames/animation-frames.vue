@@ -1,0 +1,88 @@
+<template>
+  <div :style="getStyle"
+       class="animation-frames">
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'animation-frames',
+  props: {
+    // 单个帧图片的宽度
+    width: {
+      type: [Number, String],
+      default: 141,
+    },
+    // 整个帧图片的宽度
+    allWidth: {
+      type: [Number, String],
+      default: 2256,
+    },
+    height: {
+      type: [Number, String],
+      default: 78,
+    },
+    // 播放的动画帧
+    image: {
+      type: String,
+      default: `${CONFIG.imgUrl}/menu/rect-frame.png`,
+    },
+    // 播放的周期间隔，调整动画快慢
+    duration: {
+      type: Number,
+      default: 1000 / 16,
+    },
+  },
+  data() {
+    return {
+      count: 0,
+      x: 0,
+      y: 0,
+      timer: null,
+      test: 0,
+    }
+  },
+  computed: {
+    getStyle() {
+      return {
+        width: this.width + 'px',
+        height: this.height + 'px',
+        backgroundImage: `url(${this.image})`,
+        backgroundPosition: `${this.x}px ${this.y}px`,
+        backgroundSize: `${this.allWidth}px ${this.height}px`,
+      }
+    },
+  },
+  mounted() {
+    this.init()
+  },
+  methods: {
+    init() {
+      // this.run()
+      this.animate()
+    },
+    animate() {
+      this.timer = setInterval(() => {
+        this.run()
+      }, this.duration)
+    },
+    run() {
+      if (this.count < this.allWidth / this.width) {
+        this.count += 1
+      } else {
+        this.count = 0
+      }
+      this.x = this.count * this.width * -1
+    },
+  },
+  beforeDestroy() {
+    cancelAnimationFrame(this.timer)
+    this.timer = null
+  },
+}
+</script>
+
+<style lang="less" scoped>
+.animation-frames {
+}
+</style>
